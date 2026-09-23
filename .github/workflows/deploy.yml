@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+on:
+  # À chaque push sur main
+  push:
+    branches: [main]
+  # Toutes les 30 minutes, pour rafraîchir les données des API (étape 2).
+  # GitHub peut retarder ces exécutions et les désactive après 60 jours sans activité sur le repo.
+  schedule:
+    - cron: "*/30 * * * *"
+  # À la main depuis l'onglet Actions
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois ; on ne coupe pas un déploiement en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        # Étape 2 : décommenter et créer les secrets dans Settings > Secrets and variables > Actions.
+        # env:
+        #   YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        #   YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+        #   TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+        #   TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+        #   STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+        #   STEAM_ID: ${{ secrets.STEAM_ID }}
+        #   DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+        #   DISCORD_INVITE_URL: ${{ secrets.DISCORD_INVITE_URL }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

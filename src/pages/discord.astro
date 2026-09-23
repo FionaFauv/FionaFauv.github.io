@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DiscordWidget from '../components/DiscordWidget.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { DISCORD } from '../data/placeholders';
+---
+
+<BaseLayout title="Discord" description="Qui est en ligne sur le serveur Discord, et qui traîne dans les salons vocaux.">
+  <div class="grid gap-9">
+    <PageHeader
+      kicker="Discord"
+      title="Le serveur"
+      intro="Qui est là en ce moment, et qui traîne dans les salons vocaux. Serveur privé : on y entre sur invitation."
+    />
+    <DiscordWidget data={DISCORD} />
+  </div>
+</BaseLayout>

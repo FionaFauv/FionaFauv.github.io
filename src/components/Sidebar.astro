@@ -1,0 +1,96 @@
+---
+import { NAV, SITE, SOCIALS } from '../config/site';
+import { DISCORD, LIVE } from '../data/placeholders';
+import { getGames, recentlyPlayed } from '../lib/games';
+import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+
+const lastGame = recentlyPlayed(await getGames())[0];
+const sideSocials = SOCIALS.filter((s) => s.id !== 'discord');
+---
+
+<aside
+  id="sidebar"
+  class="sidebar fixed inset-y-0 left-0 z-40 flex w-[min(290px,86vw)] -translate-x-full flex-col gap-6 overflow-y-auto border-r border-line bg-side px-4 pt-[calc(20px+env(safe-area-inset-top,0px))] pb-[calc(20px+env(safe-area-inset-bottom,0px))] transition-transform duration-200 data-[open=true]:translate-x-0 lg:sticky lg:top-0 lg:h-dvh lg:w-auto lg:translate-x-0 lg:transition-none"
+  aria-label="Menu"
+>
+  <div class="flex items-start justify-between gap-2">
+    <div class="grid gap-1.5">
+      <a href="/" class="font-display text-[30px] leading-none font-extrabold tracking-[-0.03em] no-underline">
+        Fiona<span class="text-accent">Fauv</span>
+      </a>
+      <p class="font-serif text-[15px] leading-snug text-muted italic">{SITE.tagline}</p>
+    </div>
+    <button
+      type="button"
+      class="menu-close grid size-9 shrink-0 cursor-pointer place-items-center rounded-full border border-line bg-surface lg:hidden"
+      aria-label="Fermer le menu"
+    >
+      <Icon name="close" class="size-[17px]" />
+    </button>
+  </div>
+
+  <nav class="grid gap-0.5" aria-label="Navigation principale">
+    {
+      NAV.map((item) => {
+        const active = isActive(item.href);
+        return (
+          <a
+            href={item.href}
+            aria-current={active ? 'page' : undefined}
+            class:list={[
+              'flex items-center gap-3 rounded-[10px] px-3 py-[11px] text-[15px] leading-none font-medium no-underline',
+              active ? 'bg-surface text-ink shadow-[inset_3px_0_0_var(--accent)]' : 'text-muted hover:bg-surface hover:text-ink',
+            ]}
+          >
+            <Icon name={item.icon} />
+            {item.label}
+            {item.icon === 'chat' && (
+              <span class="ml-auto inline-flex items-center gap-1.5 font-mono text-[11px] text-online" title="Membres en ligne">
+                <span class="size-[7px] rounded-full bg-online" aria-hidden="true" />
+                {DISCORD.onlineCount}
+              </span>
+            )}
+          </a>
+        );
+      })
+    }
+  </nav>
+
+  <div class="grid gap-2.5 border-t border-line pt-4">
+    <span class="kicker text-[11px]">En ce moment</span>
+    <div class="flex items-center gap-2.5 text-sm">
+      <span class:list={['size-[9px] shrink-0 rounded-full', LIVE.isLive ? 'bg-live' : 'bg-muted']} aria-hidden="true"></span>
+      Twitch : {LIVE.isLive ? 'en live' : 'hors ligne'}
+    </div>
+    {
+      lastGame && (
+        <a href={`/jeux/${lastGame.id}/`} class="flex items-center gap-2.5 text-sm no-underline hover:text-accent">
+          <span class="size-[9px] shrink-0 rounded-full bg-online" aria-hidden="true" />
+          Dernier jeu : {lastGame.data.name}
+        </a>
+      )
+    }
+  </div>
+
+  <div class="mt-auto flex items-center justify-between gap-2.5 border-t border-line pt-4">
+    <div class="flex flex-wrap gap-0.5">
+      {
+        sideSocials.map((s) => (
+          <a
+            href={s.href}
+            target="_blank"
+            rel="noopener"
+            class="grid size-7 place-items-center rounded-lg text-muted hover:bg-surface hover:text-accent"
+          >
+            <Icon name={s.id} class="size-4" label={s.label} />
+          </a>
+        ))
+      }
+    </div>
+    <ThemeToggle />
+  </div>
+</aside>

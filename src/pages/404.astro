@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+
+<BaseLayout title="Page introuvable">
+  <div class="grid gap-6">
+    <PageHeader kicker="404" title="Game over" intro="Cette page n'existe pas (ou plus)." />
+    <a href="/" class="justify-self-start font-semibold text-accent">Retour à l'accueil</a>
+  </div>
+</BaseLayout>

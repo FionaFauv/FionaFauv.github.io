@@ -1,0 +1,45 @@
+---
+import { formatRating, type Game } from '../lib/games';
+import GameCover from './GameCover.astro';
+
+interface Props {
+  games: Game[];
+  /** Version courte pour les widgets : rang, nom et note seulement. */
+  compact?: boolean;
+}
+
+const { games, compact = false } = Astro.props;
+---
+
+<ol class="grid">
+  {
+    games.map((g, i) => (
+      <li
+        class:list={[
+          'grid items-center border-b border-line',
+          compact ? 'grid-cols-[24px_minmax(0,1fr)_auto] gap-2.5 py-2.5' : 'grid-cols-[40px_48px_minmax(0,1fr)_auto] gap-3.5 py-3.5',
+        ]}
+      >
+        <span
+          class:list={[
+            'text-center font-display leading-none font-extrabold tabular-nums',
+            compact ? 'text-[19px]' : 'text-[28px]',
+            i === 0 ? 'text-accent' : 'text-muted',
+          ]}
+        >
+          {g.data.topRank}
+        </span>
+        {!compact && <GameCover game={g} class="w-12 rounded-md" />}
+        <div class="min-w-0">
+          <h3 class:list={['font-medium', compact ? 'text-base' : 'text-[19px]']}>
+            <a href={`/jeux/${g.id}/`} class="no-underline hover:text-accent">
+              {g.data.name}
+            </a>
+          </h3>
+          {!compact && g.data.review && <p class="mt-0.5 line-clamp-2 font-serif text-[15px] text-muted italic">{g.data.review}</p>}
+        </div>
+        <span class="font-mono text-[15px] leading-none whitespace-nowrap tabular-nums">{formatRating(g.data.rating)}/10</span>
+      </li>
+    ))
+  }
+</ol>

@@ -1,0 +1,30 @@
+---
+interface Props {
+  unlocked: number;
+  total: number;
+  /** Affiche le compteur « 38/63 · 60 % » au-dessus de la barre. */
+  showCount?: boolean;
+  size?: 'sm' | 'md';
+}
+
+const { unlocked, total, showCount = true, size = 'md' } = Astro.props;
+const pct = Math.round((unlocked / total) * 100);
+const full = pct === 100;
+---
+
+<div class="grid gap-1.5">
+  {
+    showCount && (
+      <span class="font-mono text-[13px] leading-none text-muted tabular-nums">
+        {unlocked}/{total} · {pct} %
+      </span>
+    )
+  }
+  <div
+    class:list={['overflow-hidden rounded-full bg-track', size === 'sm' ? 'h-[5px]' : 'h-2']}
+    role="img"
+    aria-label={`${pct} % des succès débloqués`}
+  >
+    <div class:list={['h-full rounded-full', full ? 'bg-st-fini' : 'bg-st-cours']} style={`width:${pct}%`}></div>
+  </div>
+</div>

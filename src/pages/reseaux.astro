@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SOCIALS } from '../config/site';
+---
+
+<BaseLayout title="Mes réseaux" description="Tous les endroits où retrouver FionaFauv.">
+  <div class="grid gap-9">
+    <PageHeader kicker="Mes réseaux" title="Où me trouver" />
+    <ul class="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-3">
+      {
+        SOCIALS.map((s) => (
+          <li>
+            <a
+              href={s.href}
+              target="_blank"
+              rel="noopener"
+              class="flex items-center gap-3.5 rounded-[14px] border border-line bg-surface p-4 no-underline hover:border-accent"
+            >
+              <Icon name={s.id} class="size-6 text-muted" />
+              <span>
+                <b class="block font-display text-[17px] leading-tight font-medium">{s.label}</b>
+                <span class="text-[13px] text-muted">{s.description}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>

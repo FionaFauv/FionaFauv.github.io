@@ -1,0 +1,74 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompletionBar from '../../components/CompletionBar.astro';
+import GameCover from '../../components/GameCover.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import { formatDate, formatRating, getGames, type Game } from '../../lib/games';
+
+export async function getStaticPaths() {
+  const games = await getGames();
+  return games.map((game) => ({ params: { slug: game.id }, props: { game } }));
+}
+
+interface Props {
+  game: Game;
+}
+
+const { game } = Astro.props;
+const { data } = game;
+const { Content } = await render(game);
+const facts: [string, string][] = [
+  ['Temps de jeu', data.playtimeHours !== undefined ? `${data.playtimeHours} h` : '—'],
+  ['Commencé', formatDate(data.startedAt)],
+  ['Terminé', formatDate(data.finishedAt)],
+  ['Dernière session', formatDate(data.lastPlayedAt)],
+];
+---
+
+<BaseLayout title={data.name} description={data.review}>
+  <article class="grid max-w-[760px] gap-6">
+    <a href="/jeux/" class="justify-self-start text-[15px] font-semibold text-accent no-underline hover:underline">← Carnet de jeu</a>
+
+    <div class="grid gap-6 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-end">
+      <GameCover game={game} class="w-32 sm:w-full" loading="eager" />
+      <div class="grid gap-3">
+        <p class="kicker">
+          <span class="text-accent">{data.topRank ? `Top ${data.topRank}` : 'Avis'}</span> · /jeux/{game.id}
+        </p>
+        <h1 class="text-[clamp(2.1rem,7vw,3.5rem)] leading-none font-extrabold">{data.name}</h1>
+        {data.review && <p class="font-serif text-[22px] leading-snug">{data.review}</p>}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-4 border-y border-line py-4">
+      <div class="font-mono text-[44px] leading-none font-medium tabular-nums">
+        {formatRating(data.rating)}<small class="text-base text-muted">/10</small>
+      </div>
+      <dl class="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm">
+        <dt class="text-muted">Statut</dt>
+        <dd><StatusBadge status={data.status} /></dd>
+        {
+          facts.map(([k, v]) => (
+            <>
+              <dt class="text-muted">{k}</dt>
+              <dd class="tabular-nums">{v}</dd>
+            </>
+          ))
+        }
+      </dl>
+      {
+        data.achievements && (
+          <div class="col-span-2 grid gap-1.5">
+            <span class="text-sm">Succès</span>
+            <CompletionBar unlocked={data.achievements.unlocked} total={data.achievements.total} />
+          </div>
+        )
+      }
+    </div>
+
+    <div class="prose-game">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

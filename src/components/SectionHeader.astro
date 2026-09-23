@@ -1,0 +1,19 @@
+---
+interface Props {
+  title: string;
+  /** Lien « voir plus » à droite. */
+  href?: string;
+  linkLabel?: string;
+  /** Petit texte à droite (source des données, compteur…). */
+  note?: string;
+  id?: string;
+}
+
+const { title, href, linkLabel = 'Tout voir', note, id } = Astro.props;
+---
+
+<div class="mb-1 flex items-baseline justify-between gap-3 border-b-2 border-ink pb-3" id={id}>
+  <h2 class="text-[22px] font-extrabold">{title}</h2>
+  {href && <a href={href} class="text-sm font-semibold text-accent no-underline hover:underline">{linkLabel}</a>}
+  {!href && note && <span class="text-[13px] text-muted">{note}</span>}
+</div>

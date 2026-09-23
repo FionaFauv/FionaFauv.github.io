@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompletionBar from '../../components/CompletionBar.astro';
+import GameCover from '../../components/GameCover.astro';
+import HuntList from '../../components/HuntList.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import TopList from '../../components/TopList.astro';
+import { GAME_STATUSES } from '../../content.config';
+import { completion, completionHunt, formatRating, getGames, STATUS, topGames } from '../../lib/games';
+
+const games = await getGames();
+const top = topGames(games);
+const hunt = completionHunt(games);
+const done = games.filter((g) => completion(g) === 100).length;
+const hunting = hunt.filter((g) => (completion(g) ?? 0) < 100).length;
+const unlocked = games.reduce((n, g) => n + (g.data.achievements?.unlocked ?? 0), 0);
+const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
+---
+
+<BaseLayout title="Jeux" description="Mon top, ma chasse au 100 % et tous mes jeux, avec mes notes et mes avis.">
+  <div class="grid gap-10">
+    <PageHeader kicker="Carnet de jeu" title="Jeux" intro="Mon classement, ma progression vers le 100 % et tous les jeux que j'ai touchés.">
+      <nav class="mt-6 flex flex-wrap gap-1.5" aria-label="Sections">
+        {
+          [
+            ['#top', 'Mon top'],
+            ['#chasse', 'Chasse au 100 %'],
+            ['#bibliotheque', 'Bibliothèque'],
+          ].map(([href, label]) => (
+            <a href={href} class="rounded-full border border-line bg-surface px-3.5 py-2 text-sm leading-none font-medium no-underline hover:border-accent hover:text-accent">
+              {label}
+            </a>
+          ))
+        }
+      </nav>
+    </PageHeader>
+
+    <section id="top" class="scroll-mt-20">
+      <SectionHeader title="Mon top" note="classé à la main" />
+      <TopList games={top} />
+    </section>
+
+    <section id="chasse" class="scroll-mt-20">
+      <SectionHeader title="Chasse au 100 %" note="succès Steam" />
+      <dl class="my-3 flex flex-wrap gap-x-8 gap-y-3">
+        {
+          [
+            [done, 'jeux à 100 %'],
+            [hunting, 'en chasse'],
+            [unlocked, 'succès débloqués'],
+            [hours, 'heures de jeu'],
+          ].map(([value, label]) => (
+            <div class="grid">
+              <dt class="order-last text-[13px] text-muted">{label}</dt>
+              <dd class="font-mono text-[26px] leading-tight font-medium tabular-nums">{value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <HuntList games={hunt} />
+    </section>
+
+    <section id="bibliotheque" class="scroll-mt-20">
+      <SectionHeader title="Bibliothèque" note={`${games.length} jeux`} />
+      <div class="my-3 flex flex-wrap gap-1.5" role="group" aria-label="Filtrer par statut" id="filters">
+        <button type="button" data-filter="all" aria-pressed="true" class="filter-btn">Tous</button>
+        {
+          GAME_STATUSES.map((s) => (
+            <button type="button" data-filter={s} aria-pressed="false" class="filter-btn">
+              {STATUS[s].label}
+            </button>
+          ))
+        }
+      </div>
+      <ul class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-4" id="library">
+        {
+          games.map((g) => (
+            <li class="grid content-start gap-2" data-status={g.data.status}>
+              <a href={`/jeux/${g.id}/`} class="group grid gap-2 no-underline">
+                <GameCover game={g} />
+                <h3 class="text-[15px] leading-tight font-medium group-hover:text-accent">{g.data.name}</h3>
+              </a>
+              <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
+                <StatusBadge status={g.data.status} />
+                {g.data.rating !== undefined && <span class="font-mono tabular-nums">{formatRating(g.data.rating)}/10</span>}
+              </div>
+              {g.data.achievements && (
+                <CompletionBar unlocked={g.data.achievements.unlocked} total={g.data.achievements.total} showCount={false} size="sm" />
+              )}
+            </li>
+          ))
+        }
+      </ul>
+      <p id="empty" class="mt-3 text-sm text-muted" hidden>Aucun jeu avec ce statut pour l'instant.</p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .filter-btn {
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font: 500 14px/1 var(--font-sans);
+  }
+  .filter-btn[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+</style>
+
+<script>
+  // Filtre de la bibliothèque. Sans JavaScript, tous les jeux restent visibles.
+  const buttons = document.querySelectorAll<HTMLButtonElement>('#filters [data-filter]');
+  const items = document.querySelectorAll<HTMLLIElement>('#library [data-status]');
+  const empty = document.getElementById('empty');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      let shown = 0;
+      items.forEach((li) => {
+        const visible = f === 'all' || li.dataset.status === f;
+        li.hidden = !visible;
+        if (visible) shown++;
+      });
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      if (empty) empty.hidden = shown > 0;
+    }),
+  );
+</script>

@@ -1,0 +1,78 @@
+# FionaFauv.github.io
+
+Hub perso de FionaFauv : vidéos YouTube, lives Twitch, jeux Steam (top, chasse au 100 %, avis) et serveur Discord privé. Ton perso, entre potes : pas de partie « pro », pas de page de présentation.
+
+Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, reconstruit toutes les 30 min par GitHub Actions.
+
+## Stack
+
+- Astro 7, TypeScript `strict` (`astro/tsconfigs/strict`)
+- Tailwind CSS v4 via `@tailwindcss/vite` (pas de `tailwind.config`, tout est dans `src/styles/global.css`)
+- Content Collections : loader `glob` depuis `astro/loaders`, schéma avec `z` depuis `astro/zod` (zod v4)
+- Déploiement : `.github/workflows/deploy.yml` avec les actions officielles `configure-pages`, `upload-pages-artifact`, `deploy-pages`
+
+## Structure
+
+- `src/config/site.ts` : **fichier unique** pour le nom, l'accroche, les URLs des réseaux et le menu
+- `src/content.config.ts` : collection `games` et son schéma
+- `src/content/games/<slug>.md` : une fiche par jeu (frontmatter + avis en Markdown)
+- `src/lib/games.ts` : libellés de statut, tris (top, joués récemment, dernières notes, chasse au 100 %), formats de date
+- `src/data/placeholders.ts` : données provisoires YouTube, Twitch, Discord, typées ; à remplacer par les appels API à l'étape 2 en gardant les mêmes types
+- `src/layouts/BaseLayout.astro` : layout commun (menu latéral, barre mobile, pied de page, thème)
+- `src/components/` : Sidebar, Footer, ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader
+- `src/pages/` : `/`, `/videos`, `/streams`, `/jeux`, `/jeux/[slug]`, `/discord`, `/reseaux`, `404`
+
+## Conventions
+
+- Textes du site en français, tutoiement, ton décontracté.
+- Couleurs : uniquement via les variables de `global.css` (`bg-bg`, `text-ink`, `text-muted`, `border-line`, `text-accent`, `text-st-*`…). Pas de couleur en dur dans les composants, sinon le mode sombre casse.
+- Thème : clair par défaut, sombre selon `prefers-color-scheme`, forçable par le bouton (`data-theme` sur `<html>`, mémorisé dans `localStorage`).
+- Mobile d'abord : styles de base pour mobile, puis `sm:`, `lg:` (menu latéral fixe à partir de `lg`), `xl:`.
+- Statuts de jeu : `en-cours`, `termine`, `100`, `abandonne`, `wishlist`. Libellés et couleurs dans `STATUS` (`src/lib/games.ts`).
+- L'URL d'un jeu vient du champ `slug` du frontmatter (`/jeux/<slug>/`).
+- Aucune clé API dans le code ni dans git. Les clés vont dans `.env` (local, ignoré) et dans les secrets GitHub (CI). `.env.example` liste les variables.
+- Pas de `base` dans `astro.config.mjs` : c'est un site utilisateur servi à la racine.
+
+## Commandes
+
+```sh
+npm install          # installer les dépendances
+npm run dev          # serveur local sur http://localhost:4321
+npx astro dev --background   # serveur en arrière-plan (astro dev stop / status / logs)
+npm run build        # build de production dans dist/
+npm run preview      # prévisualiser le build
+npx astro check      # vérification TypeScript des fichiers .astro
+```
+
+## Ajouter un jeu
+
+Créer `src/content/games/<slug>.md` :
+
+```md
+---
+name: "Hades"
+slug: "hades"
+status: "en-cours"        # en-cours | termine | 100 | abandonne | wishlist
+rating: 9.5               # facultatif, 0 à 10, demi-points
+review: "Avis court."     # facultatif
+startedAt: 2026-06-06     # facultatif
+finishedAt: 2026-09-20    # facultatif
+lastPlayedAt: 2026-09-20  # facultatif, pour « Derniers jeux joués »
+reviewedAt: 2026-09-20    # facultatif, pour « Dernières notes »
+topRank: 3                # facultatif, place dans le top
+steamAppId: 1145360       # facultatif, jaquette Steam + données Steam (étape 2)
+achievements: { unlocked: 20, total: 49 }  # facultatif
+playtimeHours: 40         # facultatif
+---
+
+Avis détaillé en Markdown.
+```
+
+## Feuille de route
+
+- Étape 1 (faite) : squelette, pages provisoires, collection `games`, déploiement.
+- Étape 2 : intégrations API au build : YouTube (vidéos), Twitch (live, rediffusions), Steam (bibliothèque, temps de jeu, succès via `steamAppId`), Discord (widget du serveur). Décommenter le bloc `env` du workflow.
+
+## Documentation Astro
+
+https://docs.astro.build : routing, content collections, styling/Tailwind.

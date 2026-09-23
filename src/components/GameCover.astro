@@ -1,0 +1,29 @@
+---
+import { coverUrl, type Game } from '../lib/games';
+
+interface Props {
+  game: Game;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const { game, class: className = 'w-full', loading = 'lazy' } = Astro.props;
+const src = coverUrl(game);
+---
+
+<div class:list={['placeholder-art relative aspect-[2/3] overflow-hidden rounded-lg', className]}>
+  {
+    src && (
+      <img
+        src={src}
+        alt={`Jaquette de ${game.data.name}`}
+        class="absolute inset-0 size-full object-cover"
+        loading={loading}
+        decoding="async"
+        width="600"
+        height="900"
+        onerror="this.remove()"
+      />
+    )
+  }
+</div>

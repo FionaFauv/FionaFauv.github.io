@@ -1,0 +1,148 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CompletionBar from '../components/CompletionBar.astro';
+import DiscordWidget from '../components/DiscordWidget.astro';
+import GameCover from '../components/GameCover.astro';
+import HuntList from '../components/HuntList.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import TopList from '../components/TopList.astro';
+import { DISCORD, STREAMS, VIDEOS } from '../data/placeholders';
+import {
+  completion,
+  completionHunt,
+  formatDate,
+  formatRating,
+  getGames,
+  latestRatings,
+  recentlyPlayed,
+  timeAgo,
+  topGames,
+} from '../lib/games';
+
+const games = await getGames();
+const recent = recentlyPlayed(games).slice(0, 4);
+const ratings = latestRatings(games).slice(0, 4);
+const top3 = topGames(games).slice(0, 3);
+const hunt = completionHunt(games)
+  .filter((g) => (completion(g) ?? 0) < 100)
+  .slice(0, 3);
+const lastVideo = VIDEOS[0];
+const lastStream = STREAMS[0];
+---
+
+<BaseLayout>
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-12">
+    <!-- Colonne principale -->
+    <div class="grid gap-10">
+      <p class="max-w-[22ch] font-display text-[clamp(1.8rem,4.4vw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.03em]">
+        Mes vidéos, mes lives, mes jeux et <span class="text-accent">ma chasse au 100&nbsp;%</span>.
+      </p>
+
+      <section aria-labelledby="recent-title">
+        <SectionHeader title="Derniers jeux joués" href="/jeux/" linkLabel="Tous mes jeux" id="recent-title" />
+        <ul class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {
+            recent.map((g) => (
+              <li class="grid content-start gap-2">
+                <a href={`/jeux/${g.id}/`} class="group grid gap-2 no-underline">
+                  <GameCover game={g} loading="eager" />
+                  <h3 class="text-[15px] leading-tight font-medium group-hover:text-accent">{g.data.name}</h3>
+                </a>
+                <p class="text-xs text-muted">
+                  {g.data.lastPlayedAt && timeAgo(g.data.lastPlayedAt)}
+                  {g.data.playtimeHours !== undefined && ` · ${g.data.playtimeHours} h`}
+                </p>
+                {g.data.achievements && (
+                  <CompletionBar unlocked={g.data.achievements.unlocked} total={g.data.achievements.total} showCount={false} size="sm" />
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section aria-labelledby="ratings-title">
+        <SectionHeader title="Dernières notes" href="/jeux/#bibliotheque" linkLabel="Toutes les notes" id="ratings-title" />
+        <ol class="grid">
+          {
+            ratings.map((g) => (
+              <li class="grid grid-cols-[64px_minmax(0,1fr)] items-start gap-4 border-b border-line py-4">
+                <span class="font-mono text-[28px] leading-none font-medium tabular-nums">
+                  {formatRating(g.data.rating)}
+                  <small class="text-[13px] text-muted">/10</small>
+                </span>
+                <div class="grid gap-1.5">
+                  <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                    <h3 class="text-lg font-medium">
+                      <a href={`/jeux/${g.id}/`} class="no-underline hover:text-accent">
+                        {g.data.name}
+                      </a>
+                    </h3>
+                    <StatusBadge status={g.data.status} />
+                  </div>
+                  {g.data.review && <p class="line-clamp-2 font-serif text-[17px] text-muted">{g.data.review}</p>}
+                  <span class="kicker text-[11px]">{formatDate(g.data.reviewedAt ?? g.data.finishedAt)}</span>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </section>
+
+      <section class="grid gap-5 sm:grid-cols-2" aria-label="Dernière vidéo et dernier live">
+        {
+          [
+            { kind: 'Dernière vidéo', href: '/videos/', item: lastVideo, date: lastVideo?.publishedAt },
+            { kind: 'Dernier live', href: '/streams/', item: lastStream, date: lastStream?.streamedAt },
+          ].map(
+            ({ kind, href, item, date }) =>
+              item && (
+                <a href={href} class="group grid content-start gap-2 no-underline">
+                  <span class="kicker">
+                    <span class="text-accent">{kind}</span>
+                  </span>
+                  <div class="placeholder-art relative aspect-video rounded-[10px]">
+                    <span class="absolute right-1.5 bottom-1.5 rounded-[5px] bg-black/80 px-1.5 py-1 font-mono text-[11px] leading-none text-white">
+                      {item.duration}
+                    </span>
+                  </div>
+                  <h3 class="text-[17px] font-medium group-hover:text-accent">{item.title}</h3>
+                  <span class="text-[13px] text-muted">{date && formatDate(date)}</span>
+                </a>
+              ),
+          )
+        }
+      </section>
+    </div>
+
+    <!-- Widgets à droite (en dessous sur mobile) -->
+    <aside class="grid gap-8 sm:grid-cols-2 lg:sticky lg:top-8 lg:grid-cols-1" aria-label="Widgets">
+      <section>
+        <h2 class="kicker mb-2.5 flex justify-between border-b border-line pb-2.5">
+          Discord <a href="/discord/" class="tracking-[0.04em] text-accent no-underline">Voir</a>
+        </h2>
+        <DiscordWidget data={DISCORD} compact />
+      </section>
+      <section>
+        <h2 class="kicker mb-1 flex justify-between border-b border-line pb-2.5">
+          Mon top 3 <a href="/jeux/#top" class="tracking-[0.04em] text-accent no-underline">Top</a>
+        </h2>
+        <TopList games={top3} compact />
+      </section>
+      {
+        hunt.length > 0 && (
+          <section>
+            <h2 class="kicker mb-1 flex justify-between border-b border-line pb-2.5">
+              Chasse au 100 %
+              <a href="/jeux/#chasse" class="tracking-[0.04em] text-accent no-underline">
+                Tout
+              </a>
+            </h2>
+            <HuntList games={hunt} compact />
+          </section>
+        )
+      }
+    </aside>
+  </div>
+</BaseLayout>

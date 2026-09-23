@@ -1,0 +1,181 @@
+@import "tailwindcss";
+
+/*
+ * Couleurs du site. Le thème clair est défini sur :root, le sombre s'applique
+ * selon le navigateur (prefers-color-scheme) ou quand le bouton force
+ * data-theme="dark" sur <html>. Les utilitaires Tailwind (bg-bg, text-ink…)
+ * pointent vers ces variables, donc tout suit le thème automatiquement.
+ */
+:root {
+  color-scheme: light;
+  --bg: #f4f4f8;
+  --surface: #ffffff;
+  --side: #ecebf2;
+  --ink: #17161f;
+  --muted: #5e5b6e;
+  --line: #e2e0ea;
+  --track: #e8e6ef;
+  --accent: #d92f63;
+  --accent-ink: #ffffff;
+  --accent-soft: #fbe3eb;
+  --live: #e5484d;
+  --online: #23a55a;
+  --discord: #5865f2;
+  --st-cours: #2f6fd9;
+  --st-fini: #1f8a5b;
+  --st-cent: #b7791f;
+  --st-aband: #7a7788;
+  --st-wish: #8b4fd1;
+  --thumb-a: #e9e4f4;
+  --thumb-b: #f7dce5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111017;
+    --surface: #1b1a24;
+    --side: #16151d;
+    --ink: #eeedf4;
+    --muted: #a3a0b4;
+    --line: #2c2a38;
+    --track: #2a2836;
+    --accent: #ff5c8a;
+    --accent-ink: #1a0710;
+    --accent-soft: #3a1a27;
+    --online: #3bc273;
+    --discord: #8891f7;
+    --st-cours: #6fa0ff;
+    --st-fini: #4cc38a;
+    --st-cent: #e8b04e;
+    --st-aband: #9b98aa;
+    --st-wish: #b58af0;
+    --thumb-a: #262335;
+    --thumb-b: #3a1e2b;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111017;
+  --surface: #1b1a24;
+  --side: #16151d;
+  --ink: #eeedf4;
+  --muted: #a3a0b4;
+  --line: #2c2a38;
+  --track: #2a2836;
+  --accent: #ff5c8a;
+  --accent-ink: #1a0710;
+  --accent-soft: #3a1a27;
+  --online: #3bc273;
+  --discord: #8891f7;
+  --st-cours: #6fa0ff;
+  --st-fini: #4cc38a;
+  --st-cent: #e8b04e;
+  --st-aband: #9b98aa;
+  --st-wish: #b58af0;
+  --thumb-a: #262335;
+  --thumb-b: #3a1e2b;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-side: var(--side);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-track: var(--track);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-live: var(--live);
+  --color-online: var(--online);
+  --color-discord: var(--discord);
+  --color-st-cours: var(--st-cours);
+  --color-st-fini: var(--st-fini);
+  --color-st-cent: var(--st-cent);
+  --color-st-aband: var(--st-aband);
+  --color-st-wish: var(--st-wish);
+  --color-thumb-a: var(--thumb-a);
+  --color-thumb-b: var(--thumb-b);
+
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* Bouton de thème : lune en clair (passer au sombre), soleil en sombre. */
+.theme-icon-sun { display: none; }
+:root[data-theme="dark"] .theme-icon-sun { display: block; }
+:root[data-theme="dark"] .theme-icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon-sun { display: block; }
+  :root:not([data-theme="light"]) .theme-icon-moon { display: none; }
+}
+
+@layer components {
+  /* Petit libellé en majuscules (dates, catégories). */
+  .kicker {
+    font: 500 0.75rem/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* Fond dégradé provisoire pour les miniatures et jaquettes. */
+  .placeholder-art {
+    background: linear-gradient(135deg, var(--thumb-a), var(--thumb-b));
+  }
+  /* Corps Markdown des fiches de jeu. */
+  .prose-game {
+    font: 400 1.1875rem/1.65 var(--font-serif);
+    max-width: 65ch;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .prose-game h2 {
+    font-size: 1.5rem;
+    margin-top: 0.6rem;
+  }
+  .prose-game blockquote {
+    margin: 0.4rem 0;
+    padding-left: 1.1rem;
+    border-left: 3px solid var(--accent);
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1.45;
+  }
+  .prose-game a {
+    color: var(--accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
