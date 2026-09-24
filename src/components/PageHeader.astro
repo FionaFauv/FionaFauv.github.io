@@ -10,7 +10,7 @@ const { kicker, title, intro } = Astro.props;
 
 <header>
   <p class="kicker"><span class="text-accent">{kicker}</span></p>
-  <h1 class="mt-2.5 text-[clamp(2.1rem,6vw,3.25rem)] leading-none font-extrabold">{title}</h1>
-  {intro && <p class="mt-3 max-w-[60ch] font-serif text-[19px] text-muted">{intro}</p>}
+  <h1 class="mt-2 text-[clamp(2.4rem,6vw,3.6rem)] leading-none font-extrabold">{title}</h1>
+  {intro && <p class="mt-3 max-w-[60ch] text-lg text-muted">{intro}</p>}
   <slot />
 </header>

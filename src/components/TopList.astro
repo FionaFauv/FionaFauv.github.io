@@ -9,6 +9,8 @@ interface Props {
 }
 
 const { games, compact = false } = Astro.props;
+// Pastille du rang : or pour le 1er, puis blanc, puis caillou.
+const medal = ['bg-yellow text-on-light', 'bg-white text-on-light', 'bg-[var(--pebble)] text-on-light'];
 ---
 
 <ol class="grid">
@@ -16,29 +18,29 @@ const { games, compact = false } = Astro.props;
     games.map((g, i) => (
       <li
         class:list={[
-          'grid items-center border-b border-line',
-          compact ? 'grid-cols-[24px_minmax(0,1fr)_auto] gap-2.5 py-2.5' : 'grid-cols-[40px_48px_minmax(0,1fr)_auto] gap-3.5 py-3.5',
+          'grid items-center border-b-2 border-dashed border-line last:border-b-0',
+          compact ? 'grid-cols-[40px_minmax(0,1fr)_auto] gap-3 py-2.5' : 'grid-cols-[48px_56px_minmax(0,1fr)_auto] gap-4 py-4',
         ]}
       >
         <span
           class:list={[
-            'text-center font-display leading-none font-extrabold tabular-nums',
-            compact ? 'text-[19px]' : 'text-[28px]',
-            i === 0 ? 'text-accent' : 'text-muted',
+            'grid place-items-center rounded-full border-[3px] border-outline font-display leading-none font-extrabold tabular-nums',
+            compact ? 'size-10 text-xl' : 'size-12 text-2xl',
+            medal[i] ?? 'bg-surface text-ink',
           ]}
         >
           {g.data.topRank}
         </span>
-        {!compact && <GameCover game={g} class="w-12 rounded-md" />}
+        {!compact && <GameCover game={g} class="w-14" />}
         <div class="min-w-0">
-          <h3 class:list={['font-medium', compact ? 'text-base' : 'text-[19px]']}>
-            <a href={`/jeux/${g.id}/`} class="no-underline hover:text-accent">
+          <h3 class:list={['font-bold', compact ? 'text-xl' : 'text-[22px]']}>
+            <a href={`/jeux/${g.id}/`} class="text-ink no-underline hover:text-accent">
               {g.data.name}
             </a>
           </h3>
-          {!compact && g.data.review && <p class="mt-0.5 line-clamp-2 font-serif text-[15px] text-muted italic">{g.data.review}</p>}
+          {!compact && g.data.review && <p class="mt-0.5 line-clamp-2 text-[15px] text-muted">{g.data.review}</p>}
         </div>
-        <span class="font-mono text-[15px] leading-none whitespace-nowrap tabular-nums">{formatRating(g.data.rating)}/10</span>
+        <span class="leading-none font-extrabold whitespace-nowrap tabular-nums">{formatRating(g.data.rating)}/10</span>
       </li>
     ))
   }

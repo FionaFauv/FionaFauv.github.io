@@ -21,7 +21,7 @@ const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
 
 <BaseLayout title="Jeux" description="Mon top, ma chasse au 100 % et tous mes jeux, avec mes notes et mes avis.">
   <div class="grid gap-10">
-    <PageHeader kicker="Carnet de jeu" title="Jeux" intro="Mon classement, ma progression vers le 100 % et tous les jeux que j'ai touchés.">
+    <PageHeader kicker="Jeux" title="Jeux" intro="Mon classement, ma progression vers le 100 % et tous les jeux que j'ai touchés.">
       <nav class="mt-6 flex flex-wrap gap-1.5" aria-label="Sections">
         {
           [
@@ -29,7 +29,7 @@ const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
             ['#chasse', 'Chasse au 100 %'],
             ['#bibliotheque', 'Bibliothèque'],
           ].map(([href, label]) => (
-            <a href={href} class="rounded-full border border-line bg-surface px-3.5 py-2 text-sm leading-none font-medium no-underline hover:border-accent hover:text-accent">
+            <a href={href} class="chip no-underline hover:bg-accent-soft">
               {label}
             </a>
           ))
@@ -37,12 +37,12 @@ const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
       </nav>
     </PageHeader>
 
-    <section id="top" class="scroll-mt-20">
+    <section id="top" class="card scroll-mt-6 p-5 sm:p-6">
       <SectionHeader title="Mon top" note="classé à la main" />
       <TopList games={top} />
     </section>
 
-    <section id="chasse" class="scroll-mt-20">
+    <section id="chasse" class="card scroll-mt-6 p-5 sm:p-6">
       <SectionHeader title="Chasse au 100 %" note="succès Steam" />
       <dl class="my-3 flex flex-wrap gap-x-8 gap-y-3">
         {
@@ -53,8 +53,8 @@ const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
             [hours, 'heures de jeu'],
           ].map(([value, label]) => (
             <div class="grid">
-              <dt class="order-last text-[13px] text-muted">{label}</dt>
-              <dd class="font-mono text-[26px] leading-tight font-medium tabular-nums">{value}</dd>
+              <dt class="order-last text-sm font-bold text-muted">{label}</dt>
+              <dd class="font-display text-[34px] leading-tight font-extrabold tabular-nums">{value}</dd>
             </div>
           ))
         }
@@ -62,7 +62,7 @@ const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
       <HuntList games={hunt} />
     </section>
 
-    <section id="bibliotheque" class="scroll-mt-20">
+    <section id="bibliotheque" class="scroll-mt-6">
       <SectionHeader title="Bibliothèque" note={`${games.length} jeux`} />
       <div class="my-3 flex flex-wrap gap-1.5" role="group" aria-label="Filtrer par statut" id="filters">
         <button type="button" data-filter="all" aria-pressed="true" class="filter-btn">Tous</button>
@@ -74,17 +74,17 @@ const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
           ))
         }
       </div>
-      <ul class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-4" id="library">
+      <ul class="grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-5" id="library">
         {
           games.map((g) => (
-            <li class="grid content-start gap-2" data-status={g.data.status}>
+            <li class="card grid content-start gap-2.5 p-3" data-status={g.data.status}>
               <a href={`/jeux/${g.id}/`} class="group grid gap-2 no-underline">
                 <GameCover game={g} />
-                <h3 class="text-[15px] leading-tight font-medium group-hover:text-accent">{g.data.name}</h3>
+                <h3 class="text-lg leading-tight font-bold text-ink group-hover:text-accent">{g.data.name}</h3>
               </a>
               <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
                 <StatusBadge status={g.data.status} />
-                {g.data.rating !== undefined && <span class="font-mono tabular-nums">{formatRating(g.data.rating)}/10</span>}
+                {g.data.rating !== undefined && <span class="font-bold tabular-nums">{formatRating(g.data.rating)}/10</span>}
               </div>
               {g.data.achievements && (
                 <CompletionBar unlocked={g.data.achievements.unlocked} total={g.data.achievements.total} showCount={false} size="sm" />
@@ -101,17 +101,17 @@ const hours = games.reduce((n, g) => n + (g.data.playtimeHours ?? 0), 0);
 <style>
   .filter-btn {
     cursor: pointer;
-    border: 1px solid var(--line);
+    min-height: 40px;
+    border: 3px solid var(--outline);
     background: var(--surface);
     color: var(--ink);
     border-radius: 999px;
-    padding: 8px 12px;
-    font: 500 14px/1 var(--font-sans);
+    padding: 0 14px;
+    font: 800 14px/1 var(--font-sans);
   }
   .filter-btn[aria-pressed='true'] {
-    background: var(--ink);
-    color: var(--bg);
-    border-color: var(--ink);
+    background: var(--accent);
+    color: var(--accent-ink);
   }
 </style>
 

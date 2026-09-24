@@ -28,7 +28,7 @@ const facts: [string, string][] = [
 
 <BaseLayout title={data.name} description={data.review}>
   <article class="grid max-w-[760px] gap-6">
-    <a href="/jeux/" class="justify-self-start text-[15px] font-semibold text-accent no-underline hover:underline">← Carnet de jeu</a>
+    <a href="/jeux/" class="justify-self-start font-bold no-underline hover:underline">← Tous mes jeux</a>
 
     <div class="grid gap-6 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-end">
       <GameCover game={game} class="w-32 sm:w-full" loading="eager" />
@@ -37,12 +37,12 @@ const facts: [string, string][] = [
           <span class="text-accent">{data.topRank ? `Top ${data.topRank}` : 'Avis'}</span> · /jeux/{game.id}
         </p>
         <h1 class="text-[clamp(2.1rem,7vw,3.5rem)] leading-none font-extrabold">{data.name}</h1>
-        {data.review && <p class="font-serif text-[22px] leading-snug">{data.review}</p>}
+        {data.review && <p class="text-xl leading-snug font-semibold">{data.review}</p>}
       </div>
     </div>
 
-    <div class="grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-4 border-y border-line py-4">
-      <div class="font-mono text-[44px] leading-none font-medium tabular-nums">
+    <div class="card grid grid-cols-[auto_1fr] items-center gap-x-6 gap-y-4 p-5">
+      <div class="font-display text-[52px] leading-none font-extrabold tabular-nums">
         {formatRating(data.rating)}<small class="text-base text-muted">/10</small>
       </div>
       <dl class="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-sm">
@@ -60,7 +60,7 @@ const facts: [string, string][] = [
       {
         data.achievements && (
           <div class="col-span-2 grid gap-1.5">
-            <span class="text-sm">Succès</span>
+            <span class="font-bold">Succès</span>
             <CompletionBar unlocked={data.achievements.unlocked} total={data.achievements.total} />
           </div>
         )

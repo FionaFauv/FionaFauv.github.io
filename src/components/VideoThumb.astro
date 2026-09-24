@@ -3,14 +3,16 @@ interface Props {
   src?: string;
   alt: string;
   duration?: string;
+  /** Pastille en haut à gauche (« Rediff »…). */
+  badge?: string;
   loading?: 'lazy' | 'eager';
 }
 
 // Miniature 16/9 d'une vidéo ou d'une rediffusion, avec la durée en bas à droite.
-const { src, alt, duration, loading = 'lazy' } = Astro.props;
+const { src, alt, duration, badge, loading = 'lazy' } = Astro.props;
 ---
 
-<div class="placeholder-art relative aspect-video overflow-hidden rounded-[10px]">
+<div class="placeholder-art relative aspect-video overflow-hidden rounded-2xl border-[3px] border-outline">
   {
     src && (
       <img
@@ -26,8 +28,15 @@ const { src, alt, duration, loading = 'lazy' } = Astro.props;
     )
   }
   {
+    badge && (
+      <span class="absolute top-2 left-2 rounded-full border-2 border-outline bg-red px-2.5 py-1 font-display text-xs leading-none font-bold tracking-wide text-on-color uppercase">
+        {badge}
+      </span>
+    )
+  }
+  {
     duration && (
-      <span class="absolute right-1.5 bottom-1.5 rounded-[5px] bg-black/80 px-1.5 py-1 font-mono text-[11px] leading-none text-white">
+      <span class="absolute right-2 bottom-2 rounded-full bg-black/80 px-2.5 py-1 text-xs leading-none font-bold text-white tabular-nums">
         {duration}
       </span>
     )

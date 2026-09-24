@@ -1,6 +1,8 @@
 ---
 import { completion, type Game } from '../lib/games';
+import { SPROUT_COLORS, sproutStage } from '../lib/sprout';
 import CompletionBar from './CompletionBar.astro';
+import Sprout from './Sprout.astro';
 import StatusBadge from './StatusBadge.astro';
 
 interface Props {
@@ -13,29 +15,32 @@ const { games, compact = false } = Astro.props;
 
 <ul class="grid">
   {
-    games.map((g) => {
+    games.map((g, i) => {
       const a = g.data.achievements!;
       const pct = completion(g) ?? 0;
       return (
-        <li class:list={['grid gap-2 border-b border-line', compact ? 'py-2.5' : 'py-3.5']}>
-          <div class="flex items-baseline justify-between gap-3">
-            <h3 class:list={['font-medium', compact ? 'text-[15px]' : 'text-[17px]']}>
-              <a href={`/jeux/${g.id}/`} class="no-underline hover:text-accent">
-                {g.data.name}
-              </a>
-            </h3>
-            <span class="font-mono text-[13px] leading-none whitespace-nowrap text-muted tabular-nums">
-              {a.unlocked}/{a.total} · {pct} %
-            </span>
-          </div>
-          <CompletionBar unlocked={a.unlocked} total={a.total} showCount={false} />
-          {!compact && (
-            <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-[13px] text-muted">
-              <StatusBadge status={g.data.status} />
-              {g.data.playtimeHours !== undefined && <span>{g.data.playtimeHours} h</span>}
-              <span>{pct === 100 ? 'bouclé' : `reste ${a.total - a.unlocked} succès`}</span>
+        <li class:list={['flex items-center gap-4 border-b-2 border-dashed border-line last:border-b-0', compact ? 'py-2.5' : 'py-4']}>
+          <Sprout stage={sproutStage(pct)} color={SPROUT_COLORS[i % SPROUT_COLORS.length]} size={compact ? 26 : 34} />
+          <div class="grid flex-1 gap-2">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class:list={['font-bold', compact ? 'text-lg' : 'text-[22px]']}>
+                <a href={`/jeux/${g.id}/`} class="text-ink no-underline hover:text-accent">
+                  {g.data.name}
+                </a>
+              </h3>
+              <span class="text-sm leading-none font-bold whitespace-nowrap text-muted tabular-nums">
+                {a.unlocked}/{a.total} · {pct} %
+              </span>
             </div>
-          )}
+            <CompletionBar unlocked={a.unlocked} total={a.total} showCount={false} />
+            {!compact && (
+              <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-sm text-muted">
+                <StatusBadge status={g.data.status} />
+                {g.data.playtimeHours !== undefined && <span>{g.data.playtimeHours} h</span>}
+                <span>{pct === 100 ? 'bouclé' : `reste ${a.total - a.unlocked} succès`}</span>
+              </div>
+            )}
+          </div>
         </li>
       );
     })

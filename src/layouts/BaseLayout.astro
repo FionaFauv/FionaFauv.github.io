@@ -1,9 +1,8 @@
 ---
 import '../styles/global.css';
+import Decor from '../components/Decor.astro';
 import Footer from '../components/Footer.astro';
-import Icon from '../components/Icon.astro';
-import Sidebar from '../components/Sidebar.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import Header from '../components/Header.astro';
 import { SITE } from '../config/site';
 
 interface Props {
@@ -34,7 +33,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap"
     />
     <!-- Applique le thème choisi avant l'affichage pour éviter un flash. Sans choix, le CSS suit le navigateur. -->
     <script is:inline>
@@ -44,37 +43,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       } catch {}
     </script>
   </head>
-  <body class="min-h-dvh">
-    <!-- Barre du haut, mobile uniquement -->
-    <div
-      class="sticky top-[env(safe-area-inset-top,0px)] z-20 flex items-center gap-2.5 border-b border-line bg-bg/90 px-4 py-2.5 backdrop-blur-md lg:hidden"
-    >
-      <a href="/" class="mr-auto font-display text-[22px] leading-none font-extrabold tracking-[-0.03em] no-underline">
-        Fiona<span class="text-accent">Fauv</span>
-      </a>
-      <ThemeToggle />
-      <button
-        type="button"
-        id="menu-open"
-        class="grid size-9 cursor-pointer place-items-center rounded-full border border-line bg-surface"
-        aria-label="Ouvrir le menu"
-        aria-controls="sidebar"
-        aria-expanded="false"
-      >
-        <Icon name="menu" />
-      </button>
+  <body class="flex min-h-dvh flex-col">
+    <Header />
+    <div class="relative flex-1">
+      <Decor />
+      <main class="relative z-10 mx-auto w-full max-w-[1200px] px-4 pt-8 pb-20 lg:px-10 lg:pt-12">
+        <slot />
+      </main>
     </div>
-    <div id="scrim" class="fixed inset-0 z-30 bg-black/45 lg:hidden" hidden></div>
-
-    <div class="lg:grid lg:grid-cols-[270px_minmax(0,1fr)]">
-      <Sidebar />
-      <div class="flex min-h-dvh min-w-0 flex-col">
-        <main class="mx-auto w-full max-w-[1180px] flex-1 px-4 pt-8 pb-16 lg:px-10 lg:pt-11">
-          <slot />
-        </main>
-        <Footer />
-      </div>
-    </div>
+    <Footer />
 
     <script>
       // Bouton de thème : force l'inverse du thème affiché et le mémorise.
@@ -91,19 +68,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         });
       });
 
-      // Menu latéral en tiroir sur mobile.
-      const sidebar = document.getElementById('sidebar');
-      const scrim = document.getElementById('scrim');
-      const openBtn = document.getElementById('menu-open');
+      // Menu repliable sur mobile (les boutons des pages restent visibles à partir de lg).
+      const nav = document.getElementById('site-nav');
+      const toggle = document.getElementById('menu-toggle');
       const setMenu = (open: boolean) => {
-        if (!sidebar || !scrim || !openBtn) return;
-        sidebar.dataset.open = String(open);
-        scrim.hidden = !open;
-        openBtn.setAttribute('aria-expanded', String(open));
+        if (!nav || !toggle) return;
+        nav.dataset.open = String(open);
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
       };
-      openBtn?.addEventListener('click', () => setMenu(true));
-      scrim?.addEventListener('click', () => setMenu(false));
-      document.querySelector('.menu-close')?.addEventListener('click', () => setMenu(false));
+      toggle?.addEventListener('click', () => setMenu(nav?.dataset.open !== 'true'));
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') setMenu(false);
       });

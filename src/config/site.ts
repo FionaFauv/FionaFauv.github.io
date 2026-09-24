@@ -8,7 +8,7 @@ import { DISCORD_INVITE_URL } from 'astro:env/server';
 
 export const SITE = {
   name: 'FionaFauv',
-  tagline: 'Tout ce que je fais, au même endroit.',
+  tagline: 'Le QG de Grosland, pour moi et les potes',
   description:
     'Le hub de FionaFauv : vidéos YouTube, lives Twitch, jeux Steam, chasse au 100 % et serveur Discord.',
   url: 'https://FionaFauv.github.io',

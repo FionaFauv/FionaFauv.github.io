@@ -13,14 +13,14 @@ const intro = hasYouTube ? 'Mes dernières vidéos YouTube.' : "Contenu provisoi
   <div class="grid gap-9">
     <PageHeader kicker="YouTube" title="Vidéos" intro={intro} />
     {videos.length === 0 && <p class="text-muted">Pas encore de vidéo à montrer, reviens bientôt.</p>}
-    <ul class="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-5">
+    <ul class="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-6">
       {
         videos.map((v, i) => (
-          <li>
-            <a href={v.url} target="_blank" rel="noopener" class="group grid gap-2 no-underline">
+          <li class="card p-3">
+            <a href={v.url} target="_blank" rel="noopener" class="group grid gap-3 no-underline">
               <VideoThumb src={v.thumbnail} alt="" duration={v.duration} loading={i < 4 ? 'eager' : 'lazy'} />
-              <h2 class="text-lg font-medium group-hover:text-accent">{v.title}</h2>
-              <span class="text-[13px] text-muted">{formatDate(v.publishedAt)}</span>
+              <h2 class="px-1 text-xl font-bold text-ink group-hover:text-accent">{v.title}</h2>
+              <span class="px-1 pb-1 text-sm font-bold text-muted">{formatDate(v.publishedAt)}</span>
             </a>
           </li>
         ))

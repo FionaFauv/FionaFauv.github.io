@@ -8,7 +8,7 @@ import { SOCIALS } from '../config/site';
 <BaseLayout title="Mes réseaux" description="Tous les endroits où retrouver FionaFauv.">
   <div class="grid gap-9">
     <PageHeader kicker="Mes réseaux" title="Où me trouver" />
-    <ul class="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-3">
+    <ul class="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-5">
       {
         SOCIALS.map((s) => (
           <li>
@@ -16,12 +16,12 @@ import { SOCIALS } from '../config/site';
               href={s.href}
               target="_blank"
               rel="noopener"
-              class="flex items-center gap-3.5 rounded-[14px] border border-line bg-surface p-4 no-underline hover:border-accent"
+              class="card flex items-center gap-4 p-4 text-ink no-underline hover:bg-accent-soft"
             >
-              <Icon name={s.id} class="size-6 text-muted" />
+              <span class="grid size-12 shrink-0 place-items-center rounded-full border-[3px] border-outline bg-bg"><Icon name={s.id} class="size-6" /></span>
               <span>
-                <b class="block font-display text-[17px] leading-tight font-medium">{s.label}</b>
-                <span class="text-[13px] text-muted">{s.description}</span>
+                <b class="block font-display text-xl leading-tight font-bold">{s.label}</b>
+                <span class="text-sm font-semibold text-muted">{s.description}</span>
               </span>
             </a>
           </li>

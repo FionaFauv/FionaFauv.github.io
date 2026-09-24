@@ -1,7 +1,9 @@
 ---
 import { SOCIALS } from '../config/site';
 import type { DiscordSnapshot } from '../data/placeholders';
+import { SPROUT_COLORS } from '../lib/sprout';
 import Icon from './Icon.astro';
+import Sprout from './Sprout.astro';
 
 interface Props {
   data: DiscordSnapshot;
@@ -16,97 +18,113 @@ const busiest = data.voiceChannels.toSorted((a, b) => b.count - a.count).find((c
 const who = (c: DiscordSnapshot['voiceChannels'][number]) =>
   c.members.length ? c.members.join(', ') : `${c.count} ${c.count > 1 ? 'personnes' : 'personne'}`;
 const invite = SOCIALS.find((s) => s.id === 'discord')?.href;
-const statusColor = { online: 'after:bg-online', idle: 'after:bg-st-cent', dnd: 'after:bg-live' } as const;
+const statusColor = { online: 'bg-online', idle: 'bg-yellow', dnd: 'bg-live' } as const;
+const statusLabel = { online: 'en ligne', idle: 'absent', dnd: 'ne pas déranger' } as const;
+
+// Une pousse par membre en ligne (12 au plus, le reste en « +N »).
+const MAX_SPROUTS = 12;
+const sprouts = Array.from({ length: Math.min(data.onlineCount, MAX_SPROUTS) }, (_, i) => ({
+  stage: (['leaf', 'bud', 'flower'] as const)[i % 3],
+  color: SPROUT_COLORS[i % SPROUT_COLORS.length],
+}));
+const extra = data.onlineCount - sprouts.length;
 ---
 
 {
   compact ? (
-    <div class="grid gap-2.5">
-      <div class="flex gap-5">
-        <div class="grid">
-          <b class="font-mono text-[22px] leading-tight font-medium tabular-nums">{data.onlineCount}</b>
-          <span class="text-[13px] text-muted">en ligne</span>
-        </div>
-        <div class="grid">
-          <b class="font-mono text-[22px] leading-tight font-medium tabular-nums">{inVoice}</b>
-          <span class="text-[13px] text-muted">en vocal</span>
-        </div>
+    <div class="grid gap-3">
+      <p class="font-display text-xl font-bold">{data.serverName}</p>
+      <div class="flex flex-wrap items-end gap-0.5" role="img" aria-label={`${data.onlineCount} en ligne`}>
+        {sprouts.map((s) => (
+          <Sprout stage={s.stage} color={s.color} size={26} />
+        ))}
+        {extra > 0 && <span class="ml-1 font-extrabold text-muted">+{extra}</span>}
       </div>
+      <p class="font-extrabold">
+        {data.onlineCount} en ligne · {inVoice > 0 ? `${inVoice} en vocal` : 'personne en vocal'}
+      </p>
       {busiest && (
         <p class="flex items-center gap-2 text-sm">
           <Icon name="speaker" class="size-4 text-muted" />
           {busiest.name} : {who(busiest)}
         </p>
       )}
+      {data.sample && <p class="kicker">données d'exemple</p>}
+      {invite && (
+        <a href={invite} target="_blank" rel="noopener" class="btn bg-discord text-on-color">
+          Ouvrir dans Discord
+        </a>
+      )}
     </div>
   ) : (
-    <div class="max-w-[720px] overflow-hidden rounded-2xl border border-line bg-surface">
-      <div class="flex items-center gap-3.5 border-b border-line p-[18px]">
-        <span class="grid size-[52px] shrink-0 place-items-center rounded-2xl bg-discord text-white">
+    <div class="card grid max-w-[760px] overflow-hidden">
+      <div class="flex items-center gap-4 border-b-[3px] border-dashed border-line p-5">
+        <span class="grid size-14 shrink-0 place-items-center rounded-full border-[3px] border-outline bg-discord text-on-color">
           <Icon name="discord" class="size-7" />
         </span>
         <div class="min-w-0">
-          <h2 class="text-[22px] font-extrabold">{data.serverName}</h2>
-          <p class="mt-1 flex flex-wrap gap-x-3.5 gap-y-1 text-sm text-muted">
+          <h2 class="text-[28px] font-extrabold">{data.serverName}</h2>
+          <p class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 font-bold text-muted">
             <span class="inline-flex items-center gap-1.5">
-              <span class="size-[9px] rounded-full bg-online" aria-hidden="true" />
+              <span class="size-3 rounded-full border-2 border-outline bg-online" aria-hidden="true" />
               {data.onlineCount} en ligne
             </span>
+            <span>{inVoice > 0 ? `${inVoice} en vocal` : 'personne en vocal'}</span>
             {data.memberCount !== undefined && <span>{data.memberCount} membres</span>}
-            {data.sample && <span class="kicker self-center text-[11px]">données d'exemple</span>}
+            {data.sample && <span class="kicker">données d'exemple</span>}
           </p>
         </div>
       </div>
-      <div class="grid gap-[18px] p-[18px]">
-        {data.voiceChannels.map((c) => (
-          <div class="grid gap-2">
-            <div class="flex items-center gap-2 text-[15px] font-semibold">
-              <Icon name="speaker" class="size-4 text-muted" />
-              {c.name}
-            </div>
-            <div class="flex flex-wrap gap-x-4 gap-y-2 pl-6 text-sm">
-              {c.members.length ? (
-                c.members.map((m) => <span>{m}</span>)
-              ) : c.count > 0 ? (
-                <span>{who(c)}</span>
-              ) : (
-                <span class="text-muted">Personne pour l'instant</span>
-              )}
-            </div>
+
+      <div class="grid gap-5 p-5">
+        <div class="flex flex-wrap items-end gap-1" aria-hidden="true">
+          {sprouts.map((s) => (
+            <Sprout stage={s.stage} color={s.color} size={30} />
+          ))}
+          {extra > 0 && <span class="ml-1 font-extrabold text-muted">+{extra}</span>}
+        </div>
+
+        {data.voiceChannels.length > 0 && (
+          <div class="grid gap-3">
+            <h3 class="text-xl font-extrabold">Salons vocaux</h3>
+            <ul class="grid gap-2 sm:grid-cols-2">
+              {data.voiceChannels.map((c) => (
+                <li class="grid gap-1 rounded-2xl border-[3px] border-outline bg-bg px-4 py-3">
+                  <span class="flex items-center gap-2 font-bold">
+                    <Icon name="speaker" class="size-4 text-muted" />
+                    {c.name}
+                  </span>
+                  <span class:list={['text-sm', c.count > 0 ? 'font-bold' : 'text-muted']}>
+                    {c.count > 0 ? who(c) : "Personne pour l'instant"}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
-        ))}
+        )}
         {data.voiceChannels.length === 0 && <p class="text-sm text-muted">Aucun salon vocal public.</p>}
+
         {data.onlineMembers.length > 0 && (
-          <div class="grid gap-2">
-            <div class="text-[15px] font-semibold">En ligne</div>
-            <ul class="flex flex-wrap gap-x-4 gap-y-2 pl-6">
+          <div class="grid gap-3">
+            <h3 class="text-xl font-extrabold">En ligne</h3>
+            <ul class="flex flex-wrap gap-2">
               {data.onlineMembers.map((m) => (
-                <li class="inline-flex items-center gap-2 text-sm">
-                  <span
-                    class:list={[
-                      'relative size-[26px] shrink-0 rounded-full bg-gradient-to-br from-thumb-b to-discord',
-                      'after:absolute after:-right-px after:-bottom-px after:size-[9px] after:rounded-full after:border-2 after:border-surface',
-                      statusColor[m.status],
-                    ]}
-                    aria-hidden="true"
-                  />
+                <li class="chip">
+                  <span class:list={['size-3 shrink-0 rounded-full border-2 border-outline', statusColor[m.status]]} title={statusLabel[m.status]} />
+                  <span class="sr-only">{statusLabel[m.status]} :</span>
                   {m.name}
-                  {m.activity && <small class="text-muted">· {m.activity}</small>}
+                  {m.activity && <small class="font-semibold text-muted">· {m.activity}</small>}
                 </li>
               ))}
             </ul>
           </div>
         )}
       </div>
-      <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-[color-mix(in_srgb,var(--discord)_6%,var(--surface))] px-[18px] py-3.5">
-        <span class="text-[13px] text-muted">Accès sur invitation uniquement.</span>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 border-t-[3px] border-dashed border-line px-5 py-4">
+        <span class="text-sm font-bold text-muted">Accès sur invitation uniquement.</span>
         {invite && (
-          <a
-            href={invite}
-            target="_blank"
-            rel="noopener"
-            class="inline-flex items-center gap-2 rounded-xl bg-discord px-4 py-3 text-[15px] leading-none font-semibold text-white no-underline hover:opacity-90"
-          >
+          <a href={invite} target="_blank" rel="noopener" class="btn bg-discord text-on-color">
             Ouvrir dans Discord
           </a>
         )}

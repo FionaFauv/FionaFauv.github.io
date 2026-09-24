@@ -2,146 +2,225 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CompletionBar from '../components/CompletionBar.astro';
 import DiscordWidget from '../components/DiscordWidget.astro';
-import GameCover from '../components/GameCover.astro';
-import HuntList from '../components/HuntList.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import StatusBadge from '../components/StatusBadge.astro';
+import Icon from '../components/Icon.astro';
+import Sprout from '../components/Sprout.astro';
 import TopList from '../components/TopList.astro';
 import VideoThumb from '../components/VideoThumb.astro';
-import { STREAMS } from '../data/placeholders';
+import { SOCIALS } from '../config/site';
+import { LIVE } from '../data/placeholders';
 import { getDiscord } from '../lib/discord';
-import {
-  completion,
-  completionHunt,
-  formatDate,
-  formatRating,
-  getGames,
-  latestRatings,
-  recentlyPlayed,
-  timeAgo,
-  topGames,
-} from '../lib/games';
+import { buildFeed, FEED_KIND } from '../lib/feed';
+import { completion, formatDate, formatRating, getGames, recentlyPlayed, topGames } from '../lib/games';
+import { sproutStage } from '../lib/sprout';
 import { getVideos } from '../lib/youtube';
 
 const games = await getGames();
-const recent = recentlyPlayed(games).slice(0, 4);
-const ratings = latestRatings(games).slice(0, 4);
+const videos = await getVideos();
+const discord = await getDiscord();
+// Les rediffusions Twitch rejoindront le fil avec l'intégration Twitch (Issue #5).
+const feed = buildFeed({ videos, streams: [], games });
+const firstVideo = feed.find((i) => i.kind === 'video');
 const top3 = topGames(games).slice(0, 3);
-const hunt = completionHunt(games)
-  .filter((g) => (completion(g) ?? 0) < 100)
-  .slice(0, 3);
-const lastVideo = (await getVideos())[0];
-const lastStream = STREAMS[0];
+const lastGame = recentlyPlayed(games)[0];
+
+// Pseudo affiché à côté de chaque réseau : fin de l'URL, sauf pour l'invitation Discord.
+const handle = (href: string, id: string) =>
+  id === 'discord' ? 'sur invitation' : decodeURIComponent(new URL(href).pathname.split('/').filter(Boolean).pop() ?? '');
+const dot = { youtube: 'bg-red', twitch: 'bg-purple', tiktok: 'bg-ink', instagram: 'bg-pink', discord: 'bg-blue', steam: 'bg-blue' } as const;
+const badge = {
+  red: 'bg-red text-on-color',
+  yellow: 'bg-yellow text-on-light',
+  purple: 'bg-purple text-on-color',
+  white: 'bg-white text-on-light',
+} as const;
 ---
 
 <BaseLayout>
-  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-start xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-12">
-    <!-- Colonne principale -->
-    <div class="grid gap-10">
-      <p class="max-w-[22ch] font-display text-[clamp(1.8rem,4.4vw,2.6rem)] leading-[1.05] font-extrabold tracking-[-0.03em]">
-        Mes vidéos, mes lives, mes jeux et <span class="text-accent">ma chasse au 100&nbsp;%</span>.
-      </p>
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-12">
+    <section class="grid gap-7" aria-labelledby="feed-title">
+      <h2 id="feed-title" class="kicker flex items-center gap-2.5 text-[15px] text-ink">
+        <Icon name="book" class="size-5" />
+        Dernières nouvelles
+      </h2>
 
-      <section aria-labelledby="recent-title">
-        <SectionHeader title="Derniers jeux joués" href="/jeux/" linkLabel="Tous mes jeux" id="recent-title" />
-        <ul class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {feed.length === 0 && <p class="text-muted">Rien de neuf pour l'instant.</p>}
+
+      {
+        feed.map((item) => {
+          const k = FEED_KIND[item.kind];
+          return (
+            <article class="card grid gap-4 p-4 sm:p-6">
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span
+                  class:list={[
+                    'inline-flex items-center gap-1.5 rounded-full border-[3px] border-outline px-3 py-1 font-display text-[15px] leading-none font-bold',
+                    badge[k.color],
+                  ]}
+                >
+                  <Icon name={k.icon} class="size-4" />
+                  {k.label}
+                </span>
+                <span class="text-[15px] font-bold text-muted">
+                  {item.kind === 'succes' || item.kind === 'avis' ? `${item.game.data.name} · ` : ''}
+                  {formatDate(item.date)}
+                </span>
+              </div>
+
+              {
+                item.kind === 'video' &&
+                  (item === firstVideo ? (
+                    <a href={item.video.url} target="_blank" rel="noopener" class="group grid gap-4 no-underline">
+                      <h3 class="text-[26px] font-extrabold text-ink group-hover:text-accent sm:text-[30px]">{item.video.title}</h3>
+                      <VideoThumb src={item.video.thumbnail} alt="" duration={item.video.duration} loading="eager" />
+                    </a>
+                  ) : (
+                    <a href={item.video.url} target="_blank" rel="noopener" class="group grid gap-4 no-underline sm:grid-cols-[260px_minmax(0,1fr)] sm:items-center">
+                      <VideoThumb src={item.video.thumbnail} alt="" duration={item.video.duration} />
+                      <h3 class="text-[22px] font-extrabold text-ink group-hover:text-accent">{item.video.title}</h3>
+                    </a>
+                  ))
+              }
+
+              {
+                item.kind === 'live' && (
+                  <a href={item.stream.url} target="_blank" rel="noopener" class="group grid gap-4 no-underline sm:grid-cols-[260px_minmax(0,1fr)] sm:items-center">
+                    <VideoThumb src={item.stream.thumbnail} alt="" duration={item.stream.duration} badge="Rediff" />
+                    <h3 class="text-[22px] font-extrabold text-ink group-hover:text-accent">{item.stream.title}</h3>
+                  </a>
+                )
+              }
+
+              {
+                item.kind === 'succes' &&
+                  (() => {
+                    const a = item.game.data.achievements!;
+                    const pct = completion(item.game) ?? 0;
+                    return (
+                      <>
+                        <h3 class="text-[26px] font-extrabold sm:text-[30px]">
+                          <a href={`/jeux/${item.game.id}/`} class="text-ink no-underline hover:text-accent">
+                            {a.unlocked} succès sur {a.total}
+                          </a>
+                        </h3>
+                        <div class="flex items-center gap-4">
+                          <Sprout stage={sproutStage(pct)} color="purple" size={34} />
+                          <div class="grid flex-1 gap-2">
+                            <CompletionBar unlocked={a.unlocked} total={a.total} showCount={false} />
+                            <p class="text-[15px] text-muted">
+                              {pct} %{item.game.data.playtimeHours !== undefined && ` · ${item.game.data.playtimeHours} h de jeu`}
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()
+              }
+
+              {
+                item.kind === 'avis' && (
+                  <>
+                    <h3 class="text-[26px] font-extrabold sm:text-[30px]">
+                      {item.game.data.name} : {formatRating(item.game.data.rating)}/10
+                    </h3>
+                    <div class="flex items-center gap-4">
+                      <Sprout stage={sproutStage(completion(item.game) ?? 0)} color="white" size={40} />
+                      {item.game.data.review && <p class="text-[17px] leading-relaxed">{item.game.data.review}</p>}
+                    </div>
+                    <a href={`/jeux/${item.game.id}/`} class="justify-self-start font-extrabold">
+                      Lire l'avis complet
+                    </a>
+                  </>
+                )
+              }
+            </article>
+          );
+        })
+      }
+
+      {
+        videos.length > 3 && (
+          <a href="/videos/" class="btn justify-self-start">
+            <Icon name="video" />
+            Toutes les vidéos
+          </a>
+        )
+      }
+    </section>
+
+    <aside class="grid gap-7 sm:grid-cols-2 lg:sticky lg:top-6 lg:grid-cols-1" aria-label="En bref">
+      <section class="card grid content-start gap-3.5 p-5">
+        <h2 class="flex items-center gap-2.5 text-[24px] font-extrabold">
+          <span class="grid size-10 place-items-center rounded-full border-[3px] border-outline bg-yellow text-on-light">
+            <Icon name="sun" class="size-5" />
+          </span>
+          En ce moment
+        </h2>
+        <p class="flex items-center gap-2.5 font-extrabold">
+          <span class:list={['size-3.5 rounded-full border-2 border-outline', LIVE.isLive ? 'bg-live' : 'bg-muted']} aria-hidden="true"></span>
+          Twitch : {LIVE.isLive ? 'en live' : 'hors ligne'}
+        </p>
+        {
+          lastGame && (
+            <a href={`/jeux/${lastGame.id}/`} class="flex items-center gap-2.5 font-extrabold text-ink no-underline hover:text-accent">
+              <Icon name="gamepad" class="size-[18px] text-purple" />
+              Dernier jeu : {lastGame.data.name}
+            </a>
+          )
+        }
+      </section>
+
+      <section class="card grid content-start gap-3.5 p-5">
+        <h2 class="flex items-center gap-2.5 text-[24px] font-extrabold">
+          <span class="grid size-10 place-items-center rounded-full border-[3px] border-outline bg-blue text-on-color">
+            <Icon name="chat" class="size-5" />
+          </span>
+          <a href="/discord/" class="text-ink no-underline hover:text-accent">Discord</a>
+        </h2>
+        <DiscordWidget data={discord} compact />
+      </section>
+
+      {
+        top3.length > 0 && (
+          <section class="card grid content-start gap-3.5 p-5">
+            <h2 class="flex items-center gap-2.5 text-[24px] font-extrabold">
+              <span class="grid size-10 place-items-center rounded-full border-[3px] border-outline bg-purple text-on-color">
+                <Icon name="star" class="size-5" />
+              </span>
+              <a href="/jeux/#top" class="text-ink no-underline hover:text-accent">
+                Mon top
+              </a>
+            </h2>
+            <TopList games={top3} compact />
+          </section>
+        )
+      }
+
+      <section class="card grid content-start gap-2 p-5">
+        <h2 class="mb-1.5 flex items-center gap-2.5 text-[24px] font-extrabold">
+          <span class="grid size-10 place-items-center rounded-full border-[3px] border-outline bg-red text-on-color">
+            <Icon name="link" class="size-5" />
+          </span>
+          <a href="/reseaux/" class="text-ink no-underline hover:text-accent">Mes réseaux</a>
+        </h2>
+        <ul>
           {
-            recent.map((g) => (
-              <li class="grid content-start gap-2">
-                <a href={`/jeux/${g.id}/`} class="group grid gap-2 no-underline">
-                  <GameCover game={g} loading="eager" />
-                  <h3 class="text-[15px] leading-tight font-medium group-hover:text-accent">{g.data.name}</h3>
+            SOCIALS.map((s) => (
+              <li>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener"
+                  class="flex items-center gap-2.5 border-b-2 border-dashed border-line py-2 font-bold text-ink no-underline hover:text-accent"
+                >
+                  <span class:list={['size-3 shrink-0 rounded-full border-2 border-outline', dot[s.id]]} aria-hidden="true"></span>
+                  {s.label}
+                  <span class="ml-auto truncate text-muted">{handle(s.href, s.id)}</span>
                 </a>
-                <p class="text-xs text-muted">
-                  {g.data.lastPlayedAt && timeAgo(g.data.lastPlayedAt)}
-                  {g.data.playtimeHours !== undefined && ` · ${g.data.playtimeHours} h`}
-                </p>
-                {g.data.achievements && (
-                  <CompletionBar unlocked={g.data.achievements.unlocked} total={g.data.achievements.total} showCount={false} size="sm" />
-                )}
               </li>
             ))
           }
         </ul>
       </section>
-
-      <section aria-labelledby="ratings-title">
-        <SectionHeader title="Dernières notes" href="/jeux/#bibliotheque" linkLabel="Toutes les notes" id="ratings-title" />
-        <ol class="grid">
-          {
-            ratings.map((g) => (
-              <li class="grid grid-cols-[64px_minmax(0,1fr)] items-start gap-4 border-b border-line py-4">
-                <span class="font-mono text-[28px] leading-none font-medium tabular-nums">
-                  {formatRating(g.data.rating)}
-                  <small class="text-[13px] text-muted">/10</small>
-                </span>
-                <div class="grid gap-1.5">
-                  <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                    <h3 class="text-lg font-medium">
-                      <a href={`/jeux/${g.id}/`} class="no-underline hover:text-accent">
-                        {g.data.name}
-                      </a>
-                    </h3>
-                    <StatusBadge status={g.data.status} />
-                  </div>
-                  {g.data.review && <p class="line-clamp-2 font-serif text-[17px] text-muted">{g.data.review}</p>}
-                  <span class="kicker text-[11px]">{formatDate(g.data.reviewedAt ?? g.data.finishedAt)}</span>
-                </div>
-              </li>
-            ))
-          }
-        </ol>
-      </section>
-
-      <section class="grid gap-5 sm:grid-cols-2" aria-label="Dernière vidéo et dernier live">
-        {
-          [
-            { kind: 'Dernière vidéo', href: '/videos/', item: lastVideo, date: lastVideo?.publishedAt },
-            { kind: 'Dernier live', href: '/streams/', item: lastStream, date: lastStream?.streamedAt },
-          ].map(
-            ({ kind, href, item, date }) =>
-              item && (
-                <a href={href} class="group grid content-start gap-2 no-underline">
-                  <span class="kicker">
-                    <span class="text-accent">{kind}</span>
-                  </span>
-                  <VideoThumb src={item.thumbnail} alt="" duration={item.duration} loading="eager" />
-                  <h3 class="text-[17px] font-medium group-hover:text-accent">{item.title}</h3>
-                  <span class="text-[13px] text-muted">{date && formatDate(date)}</span>
-                </a>
-              ),
-          )
-        }
-      </section>
-    </div>
-
-    <!-- Widgets à droite (en dessous sur mobile) -->
-    <aside class="grid gap-8 sm:grid-cols-2 lg:sticky lg:top-8 lg:grid-cols-1" aria-label="Widgets">
-      <section>
-        <h2 class="kicker mb-2.5 flex justify-between border-b border-line pb-2.5">
-          Discord <a href="/discord/" class="tracking-[0.04em] text-accent no-underline">Voir</a>
-        </h2>
-        <DiscordWidget data={await getDiscord()} compact />
-      </section>
-      <section>
-        <h2 class="kicker mb-1 flex justify-between border-b border-line pb-2.5">
-          Mon top 3 <a href="/jeux/#top" class="tracking-[0.04em] text-accent no-underline">Top</a>
-        </h2>
-        <TopList games={top3} compact />
-      </section>
-      {
-        hunt.length > 0 && (
-          <section>
-            <h2 class="kicker mb-1 flex justify-between border-b border-line pb-2.5">
-              Chasse au 100 %
-              <a href="/jeux/#chasse" class="tracking-[0.04em] text-accent no-underline">
-                Tout
-              </a>
-            </h2>
-            <HuntList games={hunt} compact />
-          </section>
-        )
-      }
     </aside>
   </div>
 </BaseLayout>

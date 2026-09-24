@@ -1,0 +1,86 @@
+---
+/**
+ * Petits détails dans le fond de page : pousses, cailloux, trèfles, gouttes de rosée, fleurettes.
+ * Purement décoratif (aria-hidden), posé derrière le contenu : les cartes les recouvrent
+ * quand l'écran est étroit, ils ne vivent vraiment que dans les marges.
+ */
+import type { SproutColor, SproutStage } from '../lib/sprout';
+import Sprout from './Sprout.astro';
+
+type Bit =
+  | { kind: 'sprout'; stage: SproutStage; color: SproutColor; size?: number }
+  | { kind: 'pebble' | 'clover' | 'drop' | 'flower'; size?: number; tint?: string };
+
+// Positions en % de la largeur (x) et en px depuis le haut (y), côté gauche puis côté droit.
+const BITS: (Bit & { x: string; y: number })[] = [
+  { kind: 'sprout', stage: 'leaf', color: 'red', x: '2.5%', y: 80 },
+  { kind: 'pebble', x: '4.5%', y: 220 },
+  { kind: 'clover', x: '1.8%', y: 460 },
+  { kind: 'drop', x: '5%', y: 690 },
+  { kind: 'sprout', stage: 'bud', color: 'blue', x: '3%', y: 900 },
+  { kind: 'flower', tint: 'var(--pink)', x: '1.5%', y: 1130 },
+  { kind: 'pebble', size: 20, x: '5.2%', y: 1350 },
+  { kind: 'sprout', stage: 'flower', color: 'yellow', x: '2.2%', y: 1570 },
+  { kind: 'clover', size: 30, x: '4.6%', y: 1810 },
+  { kind: 'drop', x: '2.6%', y: 2040 },
+  { kind: 'sprout', stage: 'leaf', color: 'purple', x: '4%', y: 2240 },
+  { kind: 'pebble', x: '2%', y: 2460 },
+  { kind: 'flower', tint: 'var(--yellow)', x: '4.4%', y: 2700 },
+  { kind: 'sprout', stage: 'bud', color: 'white', x: '2.4%', y: 2950 },
+  { kind: 'sprout', stage: 'bud', color: 'yellow', x: '94.5%', y: 120 },
+  { kind: 'drop', x: '96.6%', y: 330 },
+  { kind: 'pebble', size: 22, x: '93.8%', y: 500 },
+  { kind: 'flower', tint: 'var(--yellow)', x: '96%', y: 740 },
+  { kind: 'clover', size: 32, x: '93.6%', y: 1010 },
+  { kind: 'sprout', stage: 'flower', color: 'white', x: '96.4%', y: 1280 },
+  { kind: 'pebble', x: '94.2%', y: 1510 },
+  { kind: 'drop', size: 18, x: '96.8%', y: 1720 },
+  { kind: 'sprout', stage: 'leaf', color: 'blue', x: '94%', y: 1930 },
+  { kind: 'clover', size: 28, x: '96.2%', y: 2170 },
+  { kind: 'pebble', size: 18, x: '93.9%', y: 2360 },
+  { kind: 'sprout', stage: 'leaf', color: 'red', x: '96%', y: 2600 },
+  { kind: 'flower', tint: 'var(--pink)', x: '94%', y: 2860 },
+];
+---
+
+<div class="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+  {
+    BITS.map((b) => (
+      <div class="absolute" style={`left:${b.x};top:${b.y}px`}>
+        {b.kind === 'sprout' && <Sprout stage={b.stage} color={b.color} size={b.size ?? 22} />}
+        {b.kind === 'pebble' && (
+          <svg width={b.size ?? 26} height={(b.size ?? 26) * 0.65} viewBox="0 0 26 17">
+            <ellipse cx="13" cy="9" rx="11" ry="7" style="fill:var(--pebble);stroke:var(--outline)" stroke-width="2" />
+            <path d="M7 7 q3 -3 7 -2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" />
+          </svg>
+        )}
+        {b.kind === 'clover' && (
+          <svg width={b.size ?? 34} height={b.size ?? 34} viewBox="0 0 60 60">
+            {[
+              [0, -12],
+              [12, 6],
+              [-12, 6],
+            ].map(([dx, dy]) => (
+              <circle cx={30 + dx} cy={30 + dy} r="13" style="fill:var(--grass);stroke:var(--outline)" stroke-width="3" />
+            ))}
+            <circle cx="30" cy="30" r="4" style="fill:var(--moss)" />
+          </svg>
+        )}
+        {b.kind === 'drop' && (
+          <svg width={b.size ?? 22} height={b.size ?? 22} viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="17" style="fill:var(--dew);stroke:var(--outline)" stroke-width="3" />
+            <path d="M11 16 a10 10 0 0 1 8 -7" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none" />
+          </svg>
+        )}
+        {b.kind === 'flower' && (
+          <svg width={b.size ?? 32} height={b.size ?? 32} viewBox="0 0 90 90">
+            {[0, 60, 120, 180, 240, 300].map((a) => (
+              <ellipse cx="45" cy="22" rx="12" ry="20" style={`fill:${b.tint};stroke:var(--outline)`} stroke-width="3" transform={`rotate(${a} 45 45)`} />
+            ))}
+            <circle cx="45" cy="45" r="13" style="fill:var(--soil);stroke:var(--outline)" stroke-width="3" />
+          </svg>
+        )}
+      </div>
+    ))
+  }
+</div>

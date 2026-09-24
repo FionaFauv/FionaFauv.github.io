@@ -22,16 +22,20 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - `src/data/videos.ts` : `VIDEO_PLAYLISTS` (playlists dont toutes les vidéos s'affichent) et `VIDEO_CATALOG` (vidéos à l'unité), URL ou ID, y compris non répertoriées
 - `src/lib/youtube.ts` : `getVideos()` (playlists + catalogue + vidéos publiques de la chaîne, un seul appel par build), `hasYouTube`
 - `src/lib/discord.ts` : `getDiscord()` lit le widget public du serveur (`DISCORD_GUILD_ID`, sans clé) ; pseudos masqués sauf si `DISCORD_SHOW_NAMES` (`src/config/site.ts`) vaut `true`
-- `src/layouts/BaseLayout.astro` : layout commun (menu latéral, barre mobile, pied de page, thème)
-- `src/components/` : Sidebar, Footer, ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader, VideoThumb
+- `src/layouts/BaseLayout.astro` : layout commun (en-tête, décor de fond, pied de page, thème, menu mobile)
+- `src/components/` : Header, Footer, Decor (petits détails de fond), Sprout (pousse feuille / bourgeon / fleur), ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader, VideoThumb
+- `src/lib/feed.ts` : `buildFeed()`, le fil « Dernières nouvelles » de l'accueil (vidéos, lives, avis, progression), trié par date
+- `src/lib/sprout.ts` : types des pousses et `sproutStage()` (feuille < 50 %, bourgeon, fleur à 100 %)
 - `src/pages/` : `/`, `/videos`, `/streams`, `/jeux`, `/jeux/[slug]`, `/discord`, `/reseaux`, `404`
 
 ## Conventions
 
 - Textes du site en français, tutoiement, ton décontracté.
-- Couleurs : uniquement via les variables de `global.css` (`bg-bg`, `text-ink`, `text-muted`, `border-line`, `text-accent`, `text-st-*`…). Pas de couleur en dur dans les composants, sinon le mode sombre casse.
+- Thème « monde Pikmin » : fond crème clair avec petits détails dans les marges, contours épais (`border-outline`, 3 px), ombres franches, classes `.card`, `.btn`, `.chip`, `.kicker` dans `global.css`. Polices Baloo 2 (titres) et Nunito (texte).
+- Couleurs : uniquement via les variables de `global.css` (`bg-bg`, `bg-surface`, `text-ink`, `text-muted`, `border-outline`, `text-accent`, couleurs des oignons `bg-red` / `bg-yellow` / `bg-blue` / `bg-purple` / `bg-white`, `text-st-*`…). Texte posé sur une couleur d'oignon : `text-on-color` (blanc) ou `text-on-light` (foncé). Pas de couleur en dur dans les composants, sinon le mode sombre casse.
+- Noms de rubriques simples (« Dernières nouvelles », « En ce moment », « Mon top »…) : l'univers passe par le visuel, pas par le vocabulaire.
 - Thème : clair par défaut, sombre selon `prefers-color-scheme`, forçable par le bouton (`data-theme` sur `<html>`, mémorisé dans `localStorage`).
-- Mobile d'abord : styles de base pour mobile, puis `sm:`, `lg:` (menu latéral fixe à partir de `lg`), `xl:`.
+- Mobile d'abord : styles de base pour mobile, puis `sm:`, `lg:` (boutons des pages visibles dans l'en-tête à partir de `lg`, repliés derrière le bouton menu en dessous), `xl:`.
 - Statuts de jeu : `en-cours`, `termine`, `100`, `abandonne`, `wishlist`. Libellés et couleurs dans `STATUS` (`src/lib/games.ts`).
 - L'URL d'un jeu vient du champ `slug` du frontmatter (`/jeux/<slug>/`).
 - Aucune clé API dans le code ni dans git. Les clés vont dans `.env` (local, ignoré) et dans les secrets GitHub (CI). `.env.example` liste les variables.
