@@ -25,6 +25,7 @@ Règles strictes pour toute modification du repo.
 2. Travailler et commiter au fil de l'eau (voir « Commits »).
 3. Pousser la branche : `git push -u origin feature/nom-fonctionnalite`.
 4. Quand la fonctionnalité est **totalement terminée** (build OK, `npx astro check` OK), ouvrir une PR `feature/...` → `dev`.
+   Le workflow [CI](.github/workflows/ci.yml) relance ces vérifications sur la PR : tant que le check « Vérifications » n'est pas vert, la fusion est bloquée.
 5. **Seule FionaFauv accepte la PR, depuis GitHub.** Personne d'autre ne merge, même en local.
 6. PR acceptée : supprimer la branche juste après.
    ```sh
