@@ -1,3 +1,5 @@
+Closes #
+
 ## Fonctionnalité
 
 <!-- Ce que fait cette branche, en une ou deux phrases. -->
