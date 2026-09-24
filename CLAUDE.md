@@ -33,6 +33,17 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - Aucune clé API dans le code ni dans git. Les clés vont dans `.env` (local, ignoré) et dans les secrets GitHub (CI). `.env.example` liste les variables.
 - Pas de `base` dans `astro.config.mjs` : c'est un site utilisateur servi à la racine.
 
+## Workflow Git (règles strictes)
+
+Détail complet dans [CONTRIBUTING.md](CONTRIBUTING.md). En résumé :
+
+- `main` : production (déployée sur GitHub Pages). `dev` : intégration. On ne commit jamais directement sur l'une ou l'autre.
+- Une fonctionnalité = une branche temporaire `feature/NomFonctionnalite`, créée depuis `dev`.
+- PR `feature/...` → `dev` uniquement quand la fonctionnalité est totalement terminée.
+- Seule FionaFauv accepte les PR, depuis GitHub. Ne jamais merger soi-même : attendre sa validation.
+- PR acceptée = branche supprimée juste après (locale et distante).
+- Commits automatiques, sans demander, avec un message détaillé (quoi, où, pourquoi).
+
 ## Commandes
 
 ```sh
