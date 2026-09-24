@@ -136,6 +136,15 @@ const badge = {
           );
         })
       }
+
+      {
+        videos.length > 3 && (
+          <a href="/videos/" class="btn justify-self-start">
+            <Icon name="video" />
+            Toutes les vidéos
+          </a>
+        )
+      }
     </section>
 
     <aside class="grid gap-7 sm:grid-cols-2 lg:sticky lg:top-6 lg:grid-cols-1" aria-label="En bref">

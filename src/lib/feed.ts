@@ -3,7 +3,8 @@ import type { Game } from './games';
 
 /**
  * Fil « Dernières nouvelles » de l'accueil : vidéos, lives, avis et progression des jeux,
- * mélangés et triés du plus récent au plus ancien.
+ * mélangés et triés du plus récent au plus ancien. Vidéos et lives sont plafonnés pour
+ * qu'une série d'épisodes ne noie pas le reste (la suite est sur /videos et /streams).
  */
 export type FeedItem =
   | { kind: 'video'; date: Date; video: Video }
@@ -24,10 +25,18 @@ interface Sources {
   games: Game[];
 }
 
-export function buildFeed({ videos, streams, games }: Sources, limit = 10): FeedItem[] {
+const byDate = <T>(date: (x: T) => Date) => (a: T, b: T) => date(b).getTime() - date(a).getTime();
+
+export function buildFeed({ videos, streams, games }: Sources, { limit = 10, maxVideos = 3, maxStreams = 3 } = {}): FeedItem[] {
   const items: FeedItem[] = [
-    ...videos.map((video) => ({ kind: 'video' as const, date: video.publishedAt, video })),
-    ...streams.map((stream) => ({ kind: 'live' as const, date: stream.streamedAt, stream })),
+    ...videos
+      .toSorted(byDate((v) => v.publishedAt))
+      .slice(0, maxVideos)
+      .map((video) => ({ kind: 'video' as const, date: video.publishedAt, video })),
+    ...streams
+      .toSorted(byDate((s) => s.streamedAt))
+      .slice(0, maxStreams)
+      .map((stream) => ({ kind: 'live' as const, date: stream.streamedAt, stream })),
   ];
 
   // Un seul message par jeu : l'avis s'il est plus récent que la dernière session, sinon la progression.
