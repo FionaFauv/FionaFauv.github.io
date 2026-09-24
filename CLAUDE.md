@@ -10,6 +10,7 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - Tailwind CSS v4 via `@tailwindcss/vite` (pas de `tailwind.config`, tout est dans `src/styles/global.css`)
 - Content Collections : loader `glob` depuis `astro/loaders`, schéma avec `z` depuis `astro/zod` (zod v4)
 - Déploiement : `.github/workflows/deploy.yml` avec les actions officielles `configure-pages`, `upload-pages-artifact`, `deploy-pages`
+- CI : `.github/workflows/ci.yml` lance `astro check` et le build sur chaque PR vers `dev` ou `main` (check « Vérifications », obligatoire pour fusionner)
 
 ## Structure
 
