@@ -34,7 +34,7 @@ export interface DiscordSnapshot {
   onlineMembers: { name: string; status: 'online' | 'idle' | 'dnd'; activity?: string }[];
 }
 
-// Remplacé par l'API YouTube Data v3 (YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID).
+// Utilisé quand YOUTUBE_API_KEY est absente (voir src/lib/youtube.ts).
 export const VIDEOS: Video[] = [
   { title: "Vidéo d'exemple n° 1", url: 'https://www.youtube.com/', publishedAt: new Date('2026-09-18'), duration: '18:42' },
   { title: "Vidéo d'exemple n° 2", url: 'https://www.youtube.com/', publishedAt: new Date('2026-09-09'), duration: '24:05' },

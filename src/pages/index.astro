@@ -7,7 +7,8 @@ import HuntList from '../components/HuntList.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import TopList from '../components/TopList.astro';
-import { DISCORD, STREAMS, VIDEOS } from '../data/placeholders';
+import VideoThumb from '../components/VideoThumb.astro';
+import { DISCORD, STREAMS } from '../data/placeholders';
 import {
   completion,
   completionHunt,
@@ -19,6 +20,7 @@ import {
   timeAgo,
   topGames,
 } from '../lib/games';
+import { getVideos } from '../lib/youtube';
 
 const games = await getGames();
 const recent = recentlyPlayed(games).slice(0, 4);
@@ -27,7 +29,7 @@ const top3 = topGames(games).slice(0, 3);
 const hunt = completionHunt(games)
   .filter((g) => (completion(g) ?? 0) < 100)
   .slice(0, 3);
-const lastVideo = VIDEOS[0];
+const lastVideo = (await getVideos())[0];
 const lastStream = STREAMS[0];
 ---
 
@@ -102,11 +104,7 @@ const lastStream = STREAMS[0];
                   <span class="kicker">
                     <span class="text-accent">{kind}</span>
                   </span>
-                  <div class="placeholder-art relative aspect-video rounded-[10px]">
-                    <span class="absolute right-1.5 bottom-1.5 rounded-[5px] bg-black/80 px-1.5 py-1 font-mono text-[11px] leading-none text-white">
-                      {item.duration}
-                    </span>
-                  </div>
+                  <VideoThumb src={item.thumbnail} alt="" duration={item.duration} loading="eager" />
                   <h3 class="text-[17px] font-medium group-hover:text-accent">{item.title}</h3>
                   <span class="text-[13px] text-muted">{date && formatDate(date)}</span>
                 </a>

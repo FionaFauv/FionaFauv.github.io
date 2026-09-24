@@ -1,23 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { VIDEOS } from '../data/placeholders';
+import VideoThumb from '../components/VideoThumb.astro';
 import { formatDate } from '../lib/games';
+import { getVideos, hasYouTube } from '../lib/youtube';
+
+const videos = await getVideos();
+const intro = hasYouTube ? 'Mes dernières vidéos YouTube.' : "Contenu provisoire : les vidéos viendront de l'API YouTube.";
 ---
 
 <BaseLayout title="Vidéos">
   <div class="grid gap-9">
-    <PageHeader kicker="YouTube" title="Vidéos" intro="Contenu provisoire : les vidéos viendront de l'API YouTube à l'étape 2." />
+    <PageHeader kicker="YouTube" title="Vidéos" intro={intro} />
+    {videos.length === 0 && <p class="text-muted">Pas encore de vidéo à montrer, reviens bientôt.</p>}
     <ul class="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-5">
       {
-        VIDEOS.map((v) => (
+        videos.map((v, i) => (
           <li>
             <a href={v.url} target="_blank" rel="noopener" class="group grid gap-2 no-underline">
-              <div class="placeholder-art relative aspect-video rounded-[10px]">
-                <span class="absolute right-1.5 bottom-1.5 rounded-[5px] bg-black/80 px-1.5 py-1 font-mono text-[11px] leading-none text-white">
-                  {v.duration}
-                </span>
-              </div>
+              <VideoThumb src={v.thumbnail} alt="" duration={v.duration} loading={i < 4 ? 'eager' : 'lazy'} />
               <h2 class="text-lg font-medium group-hover:text-accent">{v.title}</h2>
               <span class="text-[13px] text-muted">{formatDate(v.publishedAt)}</span>
             </a>

@@ -18,9 +18,11 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - `src/content.config.ts` : collection `games` et son schéma
 - `src/content/games/<slug>.md` : une fiche par jeu (frontmatter + avis en Markdown)
 - `src/lib/games.ts` : libellés de statut, tris (top, joués récemment, dernières notes, chasse au 100 %), formats de date
-- `src/data/placeholders.ts` : données provisoires YouTube, Twitch, Discord, typées ; à remplacer par les appels API à l'étape 2 en gardant les mêmes types
+- `src/data/placeholders.ts` : types `Video`, `Stream`, `LiveStatus`, `DiscordSnapshot` et données provisoires, utilisées quand les clés API sont absentes
+- `src/data/videos.ts` : `VIDEO_PLAYLISTS` (playlists dont toutes les vidéos s'affichent) et `VIDEO_CATALOG` (vidéos à l'unité), URL ou ID, y compris non répertoriées
+- `src/lib/youtube.ts` : `getVideos()` (playlists + catalogue + vidéos publiques de la chaîne, un seul appel par build), `hasYouTube`
 - `src/layouts/BaseLayout.astro` : layout commun (menu latéral, barre mobile, pied de page, thème)
-- `src/components/` : Sidebar, Footer, ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader
+- `src/components/` : Sidebar, Footer, ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader, VideoThumb
 - `src/pages/` : `/`, `/videos`, `/streams`, `/jeux`, `/jeux/[slug]`, `/discord`, `/reseaux`, `404`
 
 ## Conventions
@@ -32,6 +34,7 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - Statuts de jeu : `en-cours`, `termine`, `100`, `abandonne`, `wishlist`. Libellés et couleurs dans `STATUS` (`src/lib/games.ts`).
 - L'URL d'un jeu vient du champ `slug` du frontmatter (`/jeux/<slug>/`).
 - Aucune clé API dans le code ni dans git. Les clés vont dans `.env` (local, ignoré) et dans les secrets GitHub (CI). `.env.example` liste les variables.
+- Variables d'env : déclarées dans `env.schema` d'`astro.config.mjs` (toutes facultatives), lues via `astro:env/server`. Sans clé : données provisoires. Avec clé, une erreur d'API fait échouer le build (le site en ligne garde la version précédente).
 - Pas de `base` dans `astro.config.mjs` : c'est un site utilisateur servi à la racine.
 
 ## Workflow Git (règles strictes)
@@ -83,7 +86,7 @@ Avis détaillé en Markdown.
 ## Feuille de route
 
 - Étape 1 (faite) : squelette, pages provisoires, collection `games`, déploiement.
-- Étape 2 : intégrations API au build : YouTube (vidéos), Twitch (live, rediffusions), Steam (bibliothèque, temps de jeu, succès via `steamAppId`), Discord (widget du serveur). Décommenter le bloc `env` du workflow.
+- Étape 2 : intégrations API au build : YouTube (vidéos, fait), Twitch (live, rediffusions), Steam (bibliothèque, temps de jeu, succès via `steamAppId`), Discord (widget du serveur). Décommenter le bloc `env` du workflow.
 
 ## Documentation Astro
 
