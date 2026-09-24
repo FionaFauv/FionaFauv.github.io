@@ -7,8 +7,8 @@ export const GAME_STATUSES = ['en-cours', 'termine', '100', 'abandonne', 'wishli
 /**
  * Une fiche par jeu dans src/content/games/<slug>.md.
  * Le frontmatter décrit le jeu, le corps Markdown contient l'avis détaillé.
- * Les champs Steam (succès, temps de jeu) sont remplis à la main pour l'instant ;
- * à l'étape 2 ils viendront de l'API Steam grâce à `steamAppId`.
+ * Avec `steamAppId` et les clés Steam, temps de jeu, succès et dernière session viennent de
+ * l'API Steam (src/lib/steam.ts) ; les valeurs du frontmatter servent alors de secours.
  */
 const games = defineCollection({
   loader: glob({

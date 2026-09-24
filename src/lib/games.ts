@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { getSteamStats } from './steam';
 
 export type Game = CollectionEntry<'games'>;
 export type GameStatus = Game['data']['status'];
@@ -11,12 +12,35 @@ export const STATUS: Record<GameStatus, { label: string; color: string }> = {
   wishlist: { label: 'Wishlist', color: 'text-st-wish' },
 };
 
+const time = (d?: Date) => d?.getTime() ?? 0;
+
+/**
+ * Toutes les fiches, triées par nom, enrichies avec Steam (src/lib/steam.ts) quand c'est possible :
+ * temps de jeu et succès Steam remplacent ceux du frontmatter, la dernière session prend la plus récente
+ * des deux dates. Sans données Steam, le frontmatter sert tel quel.
+ */
 export async function getGames(): Promise<Game[]> {
   const games = await getCollection('games');
-  return games.sort((a, b) => a.data.name.localeCompare(b.data.name, 'fr'));
-}
+  const appIds = games.filter((g) => g.data.steamAppId && g.data.status !== 'wishlist').map((g) => g.data.steamAppId!);
+  const steam = await getSteamStats(appIds);
 
-const time = (d?: Date) => d?.getTime() ?? 0;
+  return games
+    .map((g) => {
+      const s = g.data.steamAppId ? steam.get(g.data.steamAppId) : undefined;
+      if (!s) return g;
+      const lastPlayedAt = time(s.lastPlayedAt) > time(g.data.lastPlayedAt) ? s.lastPlayedAt : g.data.lastPlayedAt;
+      return {
+        ...g,
+        data: {
+          ...g.data,
+          playtimeHours: s.playtimeHours ?? g.data.playtimeHours,
+          achievements: s.achievements ?? g.data.achievements,
+          lastPlayedAt,
+        },
+      };
+    })
+    .sort((a, b) => a.data.name.localeCompare(b.data.name, 'fr'));
+}
 
 /** Jeux classés dans mon top, du 1er au dernier. */
 export const topGames = (games: Game[]) =>

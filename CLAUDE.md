@@ -21,6 +21,7 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - `src/data/placeholders.ts` : types `Video`, `Stream`, `LiveStatus`, `DiscordSnapshot` et données provisoires, utilisées quand les clés API sont absentes
 - `src/data/videos.ts` : `VIDEO_PLAYLISTS` (playlists dont toutes les vidéos s'affichent) et `VIDEO_CATALOG` (vidéos à l'unité), URL ou ID, y compris non répertoriées
 - `src/lib/youtube.ts` : `getVideos()` (playlists + catalogue + vidéos publiques de la chaîne, un seul appel par build), `hasYouTube`
+- `src/lib/steam.ts` : `getSteamStats()` (temps de jeu, dernière session, succès des jeux avec `steamAppId`), fusionné dans `getGames()` : Steam prime, le frontmatter sert de secours
 - `src/layouts/BaseLayout.astro` : layout commun (menu latéral, barre mobile, pied de page, thème)
 - `src/components/` : Sidebar, Footer, ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader, VideoThumb
 - `src/pages/` : `/`, `/videos`, `/streams`, `/jeux`, `/jeux/[slug]`, `/discord`, `/reseaux`, `404`
@@ -75,9 +76,9 @@ finishedAt: 2026-09-20    # facultatif
 lastPlayedAt: 2026-09-20  # facultatif, pour « Derniers jeux joués »
 reviewedAt: 2026-09-20    # facultatif, pour « Dernières notes »
 topRank: 3                # facultatif, place dans le top
-steamAppId: 1145360       # facultatif, jaquette Steam + données Steam (étape 2)
-achievements: { unlocked: 20, total: 49 }  # facultatif
-playtimeHours: 40         # facultatif
+steamAppId: 1145360       # facultatif, jaquette Steam + temps de jeu et succès Steam
+achievements: { unlocked: 20, total: 49 }  # facultatif, remplacé par Steam si dispo
+playtimeHours: 40         # facultatif, remplacé par Steam si dispo
 ---
 
 Avis détaillé en Markdown.
@@ -86,7 +87,7 @@ Avis détaillé en Markdown.
 ## Feuille de route
 
 - Étape 1 (faite) : squelette, pages provisoires, collection `games`, déploiement.
-- Étape 2 : intégrations API au build : YouTube (vidéos, fait), Twitch (live, rediffusions), Steam (bibliothèque, temps de jeu, succès via `steamAppId`), Discord (widget du serveur). Décommenter le bloc `env` du workflow.
+- Étape 2 : intégrations API au build : YouTube (vidéos, fait), Twitch (live, rediffusions), Steam (temps de jeu, succès via `steamAppId`, fait), Discord (widget du serveur). Décommenter le bloc `env` du workflow.
 
 ## Documentation Astro
 
