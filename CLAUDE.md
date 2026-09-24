@@ -19,8 +19,8 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - `src/content/games/<slug>.md` : une fiche par jeu (frontmatter + avis en Markdown)
 - `src/lib/games.ts` : libellés de statut, tris (top, joués récemment, dernières notes, chasse au 100 %), formats de date
 - `src/data/placeholders.ts` : types `Video`, `Stream`, `LiveStatus`, `DiscordSnapshot` et données provisoires, utilisées quand les clés API sont absentes
-- `src/data/videos.ts` : `VIDEO_CATALOG`, les vidéos YouTube choisies à la main (URL ou ID), y compris non répertoriées
-- `src/lib/youtube.ts` : `getVideos()` (catalogue + vidéos publiques de la chaîne, un seul appel par build), `hasYouTube`
+- `src/data/videos.ts` : `VIDEO_PLAYLISTS` (playlists dont toutes les vidéos s'affichent) et `VIDEO_CATALOG` (vidéos à l'unité), URL ou ID, y compris non répertoriées
+- `src/lib/youtube.ts` : `getVideos()` (playlists + catalogue + vidéos publiques de la chaîne, un seul appel par build), `hasYouTube`
 - `src/layouts/BaseLayout.astro` : layout commun (menu latéral, barre mobile, pied de page, thème)
 - `src/components/` : Sidebar, Footer, ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader, VideoThumb
 - `src/pages/` : `/`, `/videos`, `/streams`, `/jeux`, `/jeux/[slug]`, `/discord`, `/reseaux`, `404`
