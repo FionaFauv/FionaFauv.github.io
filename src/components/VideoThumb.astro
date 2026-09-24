@@ -3,11 +3,13 @@ interface Props {
   src?: string;
   alt: string;
   duration?: string;
+  /** Pastille en haut à gauche (« Rediff », « Temps fort »…). */
+  badge?: string;
   loading?: 'lazy' | 'eager';
 }
 
 // Miniature 16/9 d'une vidéo ou d'une rediffusion, avec la durée en bas à droite.
-const { src, alt, duration, loading = 'lazy' } = Astro.props;
+const { src, alt, duration, badge, loading = 'lazy' } = Astro.props;
 ---
 
 <div class="placeholder-art relative aspect-video overflow-hidden rounded-[10px]">
@@ -23,6 +25,13 @@ const { src, alt, duration, loading = 'lazy' } = Astro.props;
         height="360"
         onerror="this.remove()"
       />
+    )
+  }
+  {
+    badge && (
+      <span class="absolute top-1.5 left-1.5 rounded-[5px] bg-live px-1.5 py-1 text-[10px] leading-none font-semibold tracking-wide text-white uppercase">
+        {badge}
+      </span>
     )
   }
   {

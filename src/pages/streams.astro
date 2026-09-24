@@ -1,30 +1,45 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { LIVE, STREAMS } from '../data/placeholders';
+import VideoThumb from '../components/VideoThumb.astro';
+import { SOCIALS } from '../config/site';
 import { formatDate } from '../lib/games';
+import { formatNextLive, getTwitch, hasTwitch } from '../lib/twitch';
+
+const { live, streams } = await getTwitch();
+const channel = SOCIALS.find((s) => s.id === 'twitch')?.href;
+const intro = hasTwitch ? 'Mes lives, rediffusions et temps forts Twitch.' : "Contenu provisoire : les données viendront de l'API Twitch.";
+const BADGE = { archive: 'Rediff', highlight: 'Temps fort', upload: 'Vidéo' } as const;
 ---
 
 <BaseLayout title="Streams">
   <div class="grid gap-9">
-    <PageHeader kicker="Twitch" title="Streams" intro="Planning et rediffusions. Les données Twitch arriveront à l'étape 2." />
-    <p class="flex items-center gap-2.5 text-sm">
-      <span class:list={['size-[9px] rounded-full', LIVE.isLive ? 'bg-live' : 'bg-muted']} aria-hidden="true"></span>
-      {LIVE.isLive ? `En live : ${LIVE.title ?? ''}` : 'Hors ligne · prochain live à définir'}
+    <PageHeader kicker="Twitch" title="Streams" intro={intro} />
+    <p class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm">
+      <span class:list={['size-[9px] rounded-full', live.isLive ? 'bg-live' : 'bg-muted']} aria-hidden="true"></span>
+      {
+        live.isLive ? (
+          <a href={channel} target="_blank" rel="noopener" class="font-medium text-accent">
+            En live : {live.title}
+            {live.game && ` · ${live.game}`}
+          </a>
+        ) : live.next ? (
+          <span>
+            Hors ligne · prochain live {formatNextLive(live.next.startAt)}
+            {(live.next.game ?? live.next.title) && <span class="text-muted"> · {live.next.game ?? live.next.title}</span>}
+          </span>
+        ) : (
+          'Hors ligne · prochain live à définir'
+        )
+      }
     </p>
+    {streams.length === 0 && <p class="text-muted">Pas encore de rediffusion à montrer, reviens après le prochain live.</p>}
     <ul class="grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-5">
       {
-        STREAMS.map((s) => (
+        streams.map((s, i) => (
           <li>
             <a href={s.url} target="_blank" rel="noopener" class="group grid gap-2 no-underline">
-              <div class="placeholder-art relative aspect-video rounded-[10px]">
-                <span class="absolute top-1.5 left-1.5 rounded-[5px] bg-live px-1.5 py-1 text-[10px] leading-none font-semibold tracking-wide text-white uppercase">
-                  Rediff
-                </span>
-                <span class="absolute right-1.5 bottom-1.5 rounded-[5px] bg-black/80 px-1.5 py-1 font-mono text-[11px] leading-none text-white">
-                  {s.duration}
-                </span>
-              </div>
+              <VideoThumb src={s.thumbnail} alt="" duration={s.duration} badge={BADGE[s.kind ?? 'archive']} loading={i < 4 ? 'eager' : 'lazy'} />
               <h2 class="text-lg font-medium group-hover:text-accent">{s.title}</h2>
               <span class="text-[13px] text-muted">{formatDate(s.streamedAt)}</span>
             </a>

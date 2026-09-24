@@ -8,7 +8,7 @@ import SectionHeader from '../components/SectionHeader.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import TopList from '../components/TopList.astro';
 import VideoThumb from '../components/VideoThumb.astro';
-import { DISCORD, STREAMS } from '../data/placeholders';
+import { DISCORD } from '../data/placeholders';
 import {
   completion,
   completionHunt,
@@ -20,6 +20,7 @@ import {
   timeAgo,
   topGames,
 } from '../lib/games';
+import { getTwitch } from '../lib/twitch';
 import { getVideos } from '../lib/youtube';
 
 const games = await getGames();
@@ -30,7 +31,7 @@ const hunt = completionHunt(games)
   .filter((g) => (completion(g) ?? 0) < 100)
   .slice(0, 3);
 const lastVideo = (await getVideos())[0];
-const lastStream = STREAMS[0];
+const lastStream = (await getTwitch()).streams[0];
 ---
 
 <BaseLayout>
