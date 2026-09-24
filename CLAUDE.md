@@ -21,6 +21,7 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 - `src/data/placeholders.ts` : types `Video`, `Stream`, `LiveStatus`, `DiscordSnapshot` et données provisoires, utilisées quand les clés API sont absentes
 - `src/data/videos.ts` : `VIDEO_PLAYLISTS` (playlists dont toutes les vidéos s'affichent) et `VIDEO_CATALOG` (vidéos à l'unité), URL ou ID, y compris non répertoriées
 - `src/lib/youtube.ts` : `getVideos()` (playlists + catalogue + vidéos publiques de la chaîne, un seul appel par build), `hasYouTube`
+- `src/lib/discord.ts` : `getDiscord()` lit le widget public du serveur (`DISCORD_GUILD_ID`, sans clé) ; pseudos masqués sauf si `DISCORD_SHOW_NAMES` (`src/config/site.ts`) vaut `true`
 - `src/layouts/BaseLayout.astro` : layout commun (menu latéral, barre mobile, pied de page, thème)
 - `src/components/` : Sidebar, Footer, ThemeToggle, Icon, StatusBadge, CompletionBar, GameCover, TopList, HuntList, DiscordWidget, SectionHeader, PageHeader, VideoThumb
 - `src/pages/` : `/`, `/videos`, `/streams`, `/jeux`, `/jeux/[slug]`, `/discord`, `/reseaux`, `404`
@@ -86,7 +87,7 @@ Avis détaillé en Markdown.
 ## Feuille de route
 
 - Étape 1 (faite) : squelette, pages provisoires, collection `games`, déploiement.
-- Étape 2 : intégrations API au build : YouTube (vidéos, fait), Twitch (live, rediffusions), Steam (bibliothèque, temps de jeu, succès via `steamAppId`), Discord (widget du serveur). Décommenter le bloc `env` du workflow.
+- Étape 2 : intégrations API au build : YouTube (vidéos, fait), Twitch (live, rediffusions), Steam (bibliothèque, temps de jeu, succès via `steamAppId`), Discord (widget du serveur, fait). Décommenter le bloc `env` du workflow.
 
 ## Documentation Astro
 

@@ -1,6 +1,7 @@
 ---
 import { NAV, SITE, SOCIALS } from '../config/site';
-import { DISCORD, LIVE } from '../data/placeholders';
+import { LIVE } from '../data/placeholders';
+import { getDiscord } from '../lib/discord';
 import { getGames, recentlyPlayed } from '../lib/games';
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
@@ -9,6 +10,7 @@ const path = Astro.url.pathname.replace(/\/?$/, '/');
 const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 
 const lastGame = recentlyPlayed(await getGames())[0];
+const DISCORD = await getDiscord();
 const sideSocials = SOCIALS.filter((s) => s.id !== 'discord');
 ---
 

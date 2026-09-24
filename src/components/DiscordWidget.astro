@@ -10,8 +10,11 @@ interface Props {
 }
 
 const { data, compact = false } = Astro.props;
-const inVoice = data.voiceChannels.reduce((n, c) => n + c.members.length, 0);
-const busiest = data.voiceChannels.find((c) => c.members.length > 0);
+const inVoice = data.voiceChannels.reduce((n, c) => n + c.count, 0);
+const busiest = data.voiceChannels.toSorted((a, b) => b.count - a.count).find((c) => c.count > 0);
+// Pseudos si disponibles, sinon « 2 personnes ».
+const who = (c: DiscordSnapshot['voiceChannels'][number]) =>
+  c.members.length ? c.members.join(', ') : `${c.count} ${c.count > 1 ? 'personnes' : 'personne'}`;
 const invite = SOCIALS.find((s) => s.id === 'discord')?.href;
 const statusColor = { online: 'after:bg-online', idle: 'after:bg-st-cent', dnd: 'after:bg-live' } as const;
 ---
@@ -32,7 +35,7 @@ const statusColor = { online: 'after:bg-online', idle: 'after:bg-st-cent', dnd: 
       {busiest && (
         <p class="flex items-center gap-2 text-sm">
           <Icon name="speaker" class="size-4 text-muted" />
-          {busiest.name} : {busiest.members.join(', ')}
+          {busiest.name} : {who(busiest)}
         </p>
       )}
     </div>
@@ -50,7 +53,7 @@ const statusColor = { online: 'after:bg-online', idle: 'after:bg-st-cent', dnd: 
               {data.onlineCount} en ligne
             </span>
             {data.memberCount !== undefined && <span>{data.memberCount} membres</span>}
-            <span class="kicker self-center text-[11px]">données d'exemple</span>
+            {data.sample && <span class="kicker self-center text-[11px]">données d'exemple</span>}
           </p>
         </div>
       </div>
@@ -62,29 +65,38 @@ const statusColor = { online: 'after:bg-online', idle: 'after:bg-st-cent', dnd: 
               {c.name}
             </div>
             <div class="flex flex-wrap gap-x-4 gap-y-2 pl-6 text-sm">
-              {c.members.length ? c.members.map((m) => <span>{m}</span>) : <span class="text-muted">Personne pour l'instant</span>}
+              {c.members.length ? (
+                c.members.map((m) => <span>{m}</span>)
+              ) : c.count > 0 ? (
+                <span>{who(c)}</span>
+              ) : (
+                <span class="text-muted">Personne pour l'instant</span>
+              )}
             </div>
           </div>
         ))}
-        <div class="grid gap-2">
-          <div class="text-[15px] font-semibold">En ligne</div>
-          <ul class="flex flex-wrap gap-x-4 gap-y-2 pl-6">
-            {data.onlineMembers.map((m) => (
-              <li class="inline-flex items-center gap-2 text-sm">
-                <span
-                  class:list={[
-                    'relative size-[26px] shrink-0 rounded-full bg-gradient-to-br from-thumb-b to-discord',
-                    'after:absolute after:-right-px after:-bottom-px after:size-[9px] after:rounded-full after:border-2 after:border-surface',
-                    statusColor[m.status],
-                  ]}
-                  aria-hidden="true"
-                />
-                {m.name}
-                {m.activity && <small class="text-muted">· {m.activity}</small>}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {data.voiceChannels.length === 0 && <p class="text-sm text-muted">Aucun salon vocal public.</p>}
+        {data.onlineMembers.length > 0 && (
+          <div class="grid gap-2">
+            <div class="text-[15px] font-semibold">En ligne</div>
+            <ul class="flex flex-wrap gap-x-4 gap-y-2 pl-6">
+              {data.onlineMembers.map((m) => (
+                <li class="inline-flex items-center gap-2 text-sm">
+                  <span
+                    class:list={[
+                      'relative size-[26px] shrink-0 rounded-full bg-gradient-to-br from-thumb-b to-discord',
+                      'after:absolute after:-right-px after:-bottom-px after:size-[9px] after:rounded-full after:border-2 after:border-surface',
+                      statusColor[m.status],
+                    ]}
+                    aria-hidden="true"
+                  />
+                  {m.name}
+                  {m.activity && <small class="text-muted">· {m.activity}</small>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-[color-mix(in_srgb,var(--discord)_6%,var(--surface))] px-[18px] py-3.5">
         <span class="text-[13px] text-muted">Accès sur invitation uniquement.</span>
