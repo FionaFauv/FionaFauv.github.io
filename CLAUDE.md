@@ -14,7 +14,7 @@ Site statique, hébergé sur GitHub Pages à https://FionaFauv.github.io, recons
 
 ## Structure
 
-- `src/config/site.ts` : **fichier unique** pour le nom, l'accroche, les URLs des réseaux et le menu
+- `src/config/site.ts` : **fichier unique** pour le nom, l'accroche, les URLs des réseaux et le menu ; l'invitation Discord vient de `DISCORD_INVITE_URL` (lu au build, jamais dans le repo)
 - `src/content.config.ts` : collection `games` et son schéma
 - `src/content/games/<slug>.md` : une fiche par jeu (frontmatter + avis en Markdown)
 - `src/lib/games.ts` : libellés de statut, tris (top, joués récemment, dernières notes, chasse au 100 %), formats de date

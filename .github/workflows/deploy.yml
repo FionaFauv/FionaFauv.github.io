@@ -48,7 +48,7 @@ jobs:
           # STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
           # STEAM_ID: ${{ secrets.STEAM_ID }}
           # DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
-          # DISCORD_INVITE_URL: ${{ secrets.DISCORD_INVITE_URL }}
+          DISCORD_INVITE_URL: ${{ secrets.DISCORD_INVITE_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
