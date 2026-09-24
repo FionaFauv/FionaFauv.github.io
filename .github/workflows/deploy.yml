@@ -39,16 +39,16 @@ jobs:
 
       - name: Build
         run: npm run build
-        # Étape 2 : décommenter et créer les secrets dans Settings > Secrets and variables > Actions.
-        # env:
-        #   YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-        #   YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
-        #   TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
-        #   TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
-        #   STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
-        #   STEAM_ID: ${{ secrets.STEAM_ID }}
-        #   DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
-        #   DISCORD_INVITE_URL: ${{ secrets.DISCORD_INVITE_URL }}
+        # Secrets : Settings > Secrets and variables > Actions. Décommenter chaque ligne quand son intégration arrive.
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+          # TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          # TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          # STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+          # STEAM_ID: ${{ secrets.STEAM_ID }}
+          # DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+          # DISCORD_INVITE_URL: ${{ secrets.DISCORD_INVITE_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
