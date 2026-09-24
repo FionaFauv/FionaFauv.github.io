@@ -1,0 +1,33 @@
+name: Bug
+description: Quelque chose ne marche pas sur le site ou dans le build.
+title: "Ce qui ne marche pas"
+labels: [bug]
+body:
+  - type: textarea
+    id: constat
+    attributes:
+      label: Constat
+      description: Ce qui se passe.
+    validations:
+      required: true
+  - type: textarea
+    id: attendu
+    attributes:
+      label: Attendu
+      description: Ce qui devrait se passer.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduire
+    attributes:
+      label: Étapes pour reproduire
+      description: Page, appareil, thème clair ou sombre, action faite.
+      value: |
+        1. 
+    validations:
+      required: true
+  - type: textarea
+    id: capture
+    attributes:
+      label: Capture ou message d'erreur
+      description: Facultatif.

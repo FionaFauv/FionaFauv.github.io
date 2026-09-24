@@ -1,0 +1,28 @@
+name: Fonctionnalité
+description: Une nouvelle fonctionnalité du site (= une branche feature/<n>-nom).
+title: "Titre court de la fonctionnalité"
+labels: [feature]
+body:
+  - type: textarea
+    id: objectif
+    attributes:
+      label: Objectif
+      description: Ce que la fonctionnalité apporte, en une ou deux phrases.
+    validations:
+      required: true
+  - type: textarea
+    id: a-faire
+    attributes:
+      label: À faire
+      description: Les étapes, sous forme de cases à cocher.
+      value: |
+        - [ ] 
+    validations:
+      required: true
+  - type: textarea
+    id: termine-quand
+    attributes:
+      label: Terminé quand
+      description: Le critère qui permet de dire que c'est fini et d'ouvrir la PR.
+    validations:
+      required: true

@@ -12,7 +12,7 @@ Règles strictes pour toute modification du repo.
 
 - On ne commit jamais directement sur `main` ni sur `dev`.
 - **Une fonctionnalité = une branche.** Pas deux sujets dans la même branche.
-- Nom en `kebab-case` après le préfixe : `feature/integration-youtube`, `feature/page-discord`.
+- Nom : `feature/<n>-nom-en-kebab-case`, où `<n>` est le numéro de l'Issue : `feature/4-integration-youtube`, `feature/12-page-discord`.
 
 ## Cycle d'une fonctionnalité
 
@@ -35,6 +35,25 @@ Règles strictes pour toute modification du repo.
    ```
 
 La mise en production (`dev` → `main`) passe aussi par une PR, validée par FionaFauv.
+
+## Issues
+
+Chaque tâche commence par une Issue, créée à partir d'un modèle (les Issues vierges sont désactivées) :
+
+| Modèle         | Label     | Pour                                              |
+| -------------- | --------- | ------------------------------------------------- |
+| Fonctionnalité | `feature` | Une nouvelle fonctionnalité : objectif, à faire, terminé quand |
+| Bug            | `bug`     | Quelque chose ne marche pas : constat, attendu, étapes |
+| Contenu        | `contenu` | Un jeu, un avis ou un texte à ajouter ou modifier |
+
+Les labels `technique` (outillage, CI, dépendances) et `documentation` s'ajoutent à la main.
+Chaque Issue est rattachée à une **milestone** (une étape de la feuille de route).
+
+Le lien Issue ↔ branche ↔ PR :
+
+1. Issue **#12** « Page Discord »
+2. Branche `feature/12-page-discord`, créée depuis `dev`
+3. PR vers `dev` avec `Closes #12` dans la description : la fusion ferme l'Issue automatiquement
 
 ## Commits
 

@@ -1,0 +1,22 @@
+name: Contenu
+description: Ajouter ou mettre à jour un jeu, un avis ou un texte du site.
+title: "Contenu à ajouter"
+labels: [contenu]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - Nouveau jeu
+        - Mise à jour d'un jeu (statut, note, avis)
+        - Texte du site
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: Détail
+      description: Pour un jeu - nom, statut, note, avis, steamAppId si connu.
+    validations:
+      required: true
