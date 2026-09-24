@@ -2,7 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DiscordWidget from '../components/DiscordWidget.astro';
 import PageHeader from '../components/PageHeader.astro';
-import { DISCORD } from '../data/placeholders';
+import { getDiscord } from '../lib/discord';
+
+const discord = await getDiscord();
 ---
 
 <BaseLayout title="Discord" description="Qui est en ligne sur le serveur Discord, et qui traîne dans les salons vocaux.">
@@ -12,6 +14,6 @@ import { DISCORD } from '../data/placeholders';
       title="Le serveur"
       intro="Qui est là en ce moment, et qui traîne dans les salons vocaux. Serveur privé : on y entre sur invitation."
     />
-    <DiscordWidget data={DISCORD} />
+    <DiscordWidget data={discord} />
   </div>
 </BaseLayout>

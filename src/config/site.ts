@@ -32,6 +32,13 @@ export const SOCIALS: Social[] = [
   { id: 'steam', label: 'Steam', description: 'Mon profil', href: 'https://steamcommunity.com/id/FionaFauv' },
 ];
 
+/**
+ * Discord : afficher les pseudos, statuts et jeux en cours des membres connectés ?
+ * false (par défaut) : uniquement des compteurs (en ligne, en vocal par salon).
+ * Ne passe à true qu'avec l'accord des membres du serveur : le site est public.
+ */
+export const DISCORD_SHOW_NAMES = false;
+
 export const NAV = [
   { href: '/', label: 'Accueil', icon: 'home' },
   { href: '/videos/', label: 'Vidéos', icon: 'video' },

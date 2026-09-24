@@ -14,6 +14,7 @@ export default defineConfig({
     schema: {
       YOUTUBE_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
       YOUTUBE_CHANNEL_ID: envField.string({ context: 'server', access: 'secret', optional: true }),
+      DISCORD_GUILD_ID: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
   vite: {

@@ -8,7 +8,8 @@ import SectionHeader from '../components/SectionHeader.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import TopList from '../components/TopList.astro';
 import VideoThumb from '../components/VideoThumb.astro';
-import { DISCORD, STREAMS } from '../data/placeholders';
+import { STREAMS } from '../data/placeholders';
+import { getDiscord } from '../lib/discord';
 import {
   completion,
   completionHunt,
@@ -120,7 +121,7 @@ const lastStream = STREAMS[0];
         <h2 class="kicker mb-2.5 flex justify-between border-b border-line pb-2.5">
           Discord <a href="/discord/" class="tracking-[0.04em] text-accent no-underline">Voir</a>
         </h2>
-        <DiscordWidget data={DISCORD} compact />
+        <DiscordWidget data={await getDiscord()} compact />
       </section>
       <section>
         <h2 class="kicker mb-1 flex justify-between border-b border-line pb-2.5">

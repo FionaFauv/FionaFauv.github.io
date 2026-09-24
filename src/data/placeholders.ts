@@ -30,8 +30,12 @@ export interface DiscordSnapshot {
   serverName: string;
   onlineCount: number;
   memberCount?: number;
-  voiceChannels: { name: string; members: string[] }[];
+  /** `members` est vide quand les pseudos sont masqués (DISCORD_SHOW_NAMES) : seul `count` s'affiche. */
+  voiceChannels: { name: string; count: number; members: string[] }[];
+  /** Vide quand les pseudos sont masqués. */
   onlineMembers: { name: string; status: 'online' | 'idle' | 'dnd'; activity?: string }[];
+  /** Données d'exemple (pas de DISCORD_GUILD_ID). */
+  sample?: boolean;
 }
 
 // Utilisé quand YOUTUBE_API_KEY est absente (voir src/lib/youtube.ts).
@@ -49,14 +53,14 @@ export const STREAMS: Stream[] = [
 
 export const LIVE: LiveStatus = { isLive: false };
 
-// Remplacé par le widget du serveur Discord (DISCORD_GUILD_ID, DISCORD_INVITE_URL).
+// Utilisé quand DISCORD_GUILD_ID est absent (voir src/lib/discord.ts).
 export const DISCORD: DiscordSnapshot = {
   serverName: "Le QG (nom d'exemple)",
   onlineCount: 4,
   memberCount: 12,
   voiceChannels: [
-    { name: 'Chill', members: ['Fiona', 'Lucas'] },
-    { name: 'Coop', members: [] },
+    { name: 'Chill', count: 2, members: ['Fiona', 'Lucas'] },
+    { name: 'Coop', count: 0, members: [] },
   ],
   onlineMembers: [
     { name: 'Fiona', status: 'online', activity: 'Hollow Knight' },
@@ -64,4 +68,5 @@ export const DISCORD: DiscordSnapshot = {
     { name: 'Sam', status: 'idle' },
     { name: 'Inès', status: 'online', activity: 'Balatro' },
   ],
+  sample: true,
 };
