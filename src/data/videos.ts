@@ -15,7 +15,7 @@
  * Ajouter une vidéo à la playlist sur YouTube suffit, elle apparaît au build suivant.
  */
 export const VIDEO_PLAYLISTS: string[] = [
-  // 'https://www.youtube.com/playlist?list=PLxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+  'https://www.youtube.com/playlist?list=PLnUdeLz-Xacj-732A3UPyJ6tgLs09wbPb',
 ];
 
 /** Vidéos à l'unité, hors playlist. */
