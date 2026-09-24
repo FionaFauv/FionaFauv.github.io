@@ -37,7 +37,7 @@ export const SOCIALS: Social[] = [
  * false (par défaut) : uniquement des compteurs (en ligne, en vocal par salon).
  * Ne passe à true qu'avec l'accord des membres du serveur : le site est public.
  */
-export const DISCORD_SHOW_NAMES = false;
+export const DISCORD_SHOW_NAMES = true;
 
 export const NAV = [
   { href: '/', label: 'Accueil', icon: 'home' },
