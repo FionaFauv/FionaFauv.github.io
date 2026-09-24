@@ -12,7 +12,7 @@ export const SITE = {
   lang: 'fr',
 } as const;
 
-export type SocialId = 'youtube' | 'twitch' | 'tiktok' | 'instagram' | 'x' | 'discord' | 'steam';
+export type SocialId = 'youtube' | 'twitch' | 'tiktok' | 'instagram' | 'discord' | 'steam';
 
 export interface Social {
   id: SocialId;
@@ -23,13 +23,12 @@ export interface Social {
 }
 
 export const SOCIALS: Social[] = [
-  { id: 'youtube', label: 'YouTube', description: 'Les vidéos', href: 'https://www.youtube.com/@FionaFauv' },
-  { id: 'twitch', label: 'Twitch', description: 'Les lives', href: 'https://www.twitch.tv/FionaFauv' },
-  { id: 'tiktok', label: 'TikTok', description: 'Les clips', href: 'https://www.tiktok.com/@FionaFauv' },
-  { id: 'instagram', label: 'Instagram', description: 'Photos et DM', href: 'https://www.instagram.com/FionaFauv' },
-  { id: 'x', label: 'X', description: 'Les annonces', href: 'https://x.com/FionaFauv' },
+  { id: 'youtube', label: 'YouTube', description: 'Les vidéos', href: 'https://www.youtube.com/@Zelfaesque' },
+  { id: 'twitch', label: 'Twitch', description: 'Les lives', href: 'https://www.twitch.tv/Zelfaesque' },
+  { id: 'tiktok', label: 'TikTok', description: 'Les clips', href: 'https://www.tiktok.com/@Zelfaesque' },
+  { id: 'instagram', label: 'Instagram', description: 'Photos et DM', href: 'https://www.instagram.com/Fio_Marshall' },
   { id: 'discord', label: 'Discord', description: 'Le serveur (sur invitation)', href: 'https://discord.gg/INVITATION' },
-  { id: 'steam', label: 'Steam', description: 'Mon profil', href: 'https://steamcommunity.com/id/FionaFauv' },
+  { id: 'steam', label: 'Steam', description: 'Mon profil', href: 'https://steamcommunity.com/id/Zelfa' },
 ];
 
 export const NAV = [
