@@ -24,7 +24,7 @@ export interface Social {
 
 export const SOCIALS: Social[] = [
   { id: 'youtube', label: 'YouTube', description: 'Les vidéos', href: 'https://www.youtube.com/@FionaFauv' },
-  { id: 'twitch', label: 'Twitch', description: 'Les lives', href: 'https://www.twitch.tv/FionaFauv' },
+  { id: 'twitch', label: 'Twitch', description: 'Les lives', href: 'https://www.twitch.tv/Zelfaesque' },
   { id: 'tiktok', label: 'TikTok', description: 'Les clips', href: 'https://www.tiktok.com/@FionaFauv' },
   { id: 'instagram', label: 'Instagram', description: 'Photos et DM', href: 'https://www.instagram.com/FionaFauv' },
   { id: 'x', label: 'X', description: 'Les annonces', href: 'https://x.com/FionaFauv' },
