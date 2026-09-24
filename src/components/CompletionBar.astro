@@ -15,16 +15,16 @@ const full = pct === 100;
 <div class="grid gap-1.5">
   {
     showCount && (
-      <span class="font-mono text-[13px] leading-none text-muted tabular-nums">
+      <span class="text-sm leading-none font-bold text-muted tabular-nums">
         {unlocked}/{total} · {pct} %
       </span>
     )
   }
   <div
-    class:list={['overflow-hidden rounded-full bg-track', size === 'sm' ? 'h-[5px]' : 'h-2']}
+    class:list={['overflow-hidden rounded-full border-outline bg-track', size === 'sm' ? 'h-2.5 border-2' : 'h-4 border-[3px]']}
     role="img"
     aria-label={`${pct} % des succès débloqués`}
   >
-    <div class:list={['h-full rounded-full', full ? 'bg-st-fini' : 'bg-st-cours']} style={`width:${pct}%`}></div>
+    <div class:list={['h-full', full ? 'bg-yellow' : 'bg-grass']} style={`width:${pct}%`}></div>
   </div>
 </div>

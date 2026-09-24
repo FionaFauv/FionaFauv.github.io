@@ -12,8 +12,8 @@ interface Props {
 const { title, href, linkLabel = 'Tout voir', note, id } = Astro.props;
 ---
 
-<div class="mb-1 flex items-baseline justify-between gap-3 border-b-2 border-ink pb-3" id={id}>
-  <h2 class="text-[22px] font-extrabold">{title}</h2>
-  {href && <a href={href} class="text-sm font-semibold text-accent no-underline hover:underline">{linkLabel}</a>}
-  {!href && note && <span class="text-[13px] text-muted">{note}</span>}
+<div class="mb-3 flex items-baseline justify-between gap-3 border-b-[3px] border-dashed border-line pb-3" id={id}>
+  <h2 class="text-[28px] font-extrabold">{title}</h2>
+  {href && <a href={href} class="font-bold text-accent no-underline hover:underline">{linkLabel}</a>}
+  {!href && note && <span class="text-sm font-bold text-muted">{note}</span>}
 </div>

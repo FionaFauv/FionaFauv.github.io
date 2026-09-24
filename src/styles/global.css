@@ -1,94 +1,154 @@
 @import "tailwindcss";
 
 /*
- * Couleurs du site. Le thème clair est défini sur :root, le sombre s'applique
- * selon le navigateur (prefers-color-scheme) ou quand le bouton force
- * data-theme="dark" sur <html>. Les utilitaires Tailwind (bg-bg, text-ink…)
- * pointent vers ces variables, donc tout suit le thème automatiquement.
+ * Thème « monde Pikmin » : fond crème clair avec de petits détails dans les marges,
+ * contours épais, ombres franches, couleurs des oignons pour les catégories.
+ *
+ * Le thème clair est défini sur :root, le sombre (la nuit) s'applique selon le
+ * navigateur (prefers-color-scheme) ou quand le bouton force data-theme="dark" sur
+ * <html>. Les utilitaires Tailwind (bg-bg, text-ink…) pointent vers ces variables,
+ * donc tout suit le thème automatiquement.
  */
 :root {
   color-scheme: light;
-  --bg: #f4f4f8;
-  --surface: #ffffff;
-  --side: #ecebf2;
-  --ink: #17161f;
-  --muted: #5e5b6e;
-  --line: #e2e0ea;
-  --track: #e8e6ef;
-  --accent: #d92f63;
+  --bg: #f6f2e6;
+  --surface: #fffbea;
+  --sky: #c6ecff;
+  --ink: #22301c;
+  --muted: #5f5a44;
+  --line: #e6dcb4;
+  /* Contour et ombre des cartes, boutons, miniatures. */
+  --outline: #22301c;
+  --shadow: #2f7d32;
+  --track: #ffffff;
+  --accent: #2f7d32;
   --accent-ink: #ffffff;
-  --accent-soft: #fbe3eb;
-  --live: #e5484d;
-  --online: #23a55a;
+  --accent-soft: #e2efd2;
+  --grass: #5fae34;
+  --leaf: #2f7d32;
+  --moss: #a4d86a;
+  --soil: #7a5230;
+  --on-soil: #fffbea;
+  --pebble: #c9c2ae;
+  --dew: #e8f8ff;
+  /* Couleurs des oignons : une par catégorie. */
+  --red: #d8392a;
+  --yellow: #f5c531;
+  --blue: #2a6fd1;
+  --purple: #7545c0;
+  --white: #f4f1ea;
+  --pink: #f28bb5;
+  --live: #d8392a;
+  --online: #2f8f3a;
   --discord: #5865f2;
-  --st-cours: #2f6fd9;
-  --st-fini: #1f8a5b;
-  --st-cent: #b7791f;
-  --st-aband: #7a7788;
-  --st-wish: #8b4fd1;
-  --thumb-a: #e9e4f4;
-  --thumb-b: #f7dce5;
+  --st-cours: #2a6fd1;
+  --st-fini: #2f7d32;
+  --st-cent: #9a6a00;
+  --st-aband: #6f6a55;
+  --st-wish: #7545c0;
+  --thumb: #d9ecc4;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #111017;
-    --surface: #1b1a24;
-    --side: #16151d;
-    --ink: #eeedf4;
-    --muted: #a3a0b4;
-    --line: #2c2a38;
-    --track: #2a2836;
-    --accent: #ff5c8a;
-    --accent-ink: #1a0710;
-    --accent-soft: #3a1a27;
-    --online: #3bc273;
+    --bg: #131b15;
+    --surface: #1e2a20;
+    --sky: #1b2f4a;
+    --ink: #eef3e4;
+    --muted: #a9b39a;
+    --line: #33422f;
+    --outline: #070b08;
+    --shadow: #070b08;
+    --track: #0e1510;
+    --accent: #8fd16a;
+    --accent-ink: #10200c;
+    --accent-soft: #24371f;
+    --grass: #6cc23f;
+    --leaf: #3f9a42;
+    --moss: #5c8a3a;
+    --soil: #3b2817;
+    --on-soil: #efe6cf;
+    --pebble: #6f6a5c;
+    --dew: #9fc6dc;
+    --red: #e5503f;
+    --yellow: #f5c531;
+    --blue: #4d8ff0;
+    --purple: #9466e0;
+    --white: #e8e4d8;
+    --pink: #f59bc0;
+    --live: #f0604f;
+    --online: #5fcf6a;
     --discord: #8891f7;
-    --st-cours: #6fa0ff;
-    --st-fini: #4cc38a;
-    --st-cent: #e8b04e;
-    --st-aband: #9b98aa;
-    --st-wish: #b58af0;
-    --thumb-a: #262335;
-    --thumb-b: #3a1e2b;
+    --st-cours: #7fb0ff;
+    --st-fini: #8fd16a;
+    --st-cent: #f5c531;
+    --st-aband: #a9b39a;
+    --st-wish: #b894f0;
+    --thumb: #2a3a2b;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #111017;
-  --surface: #1b1a24;
-  --side: #16151d;
-  --ink: #eeedf4;
-  --muted: #a3a0b4;
-  --line: #2c2a38;
-  --track: #2a2836;
-  --accent: #ff5c8a;
-  --accent-ink: #1a0710;
-  --accent-soft: #3a1a27;
-  --online: #3bc273;
+  --bg: #131b15;
+  --surface: #1e2a20;
+  --sky: #1b2f4a;
+  --ink: #eef3e4;
+  --muted: #a9b39a;
+  --line: #33422f;
+  --outline: #070b08;
+  --shadow: #070b08;
+  --track: #0e1510;
+  --accent: #8fd16a;
+  --accent-ink: #10200c;
+  --accent-soft: #24371f;
+  --grass: #6cc23f;
+  --leaf: #3f9a42;
+  --moss: #5c8a3a;
+  --soil: #3b2817;
+  --on-soil: #efe6cf;
+  --pebble: #6f6a5c;
+  --dew: #9fc6dc;
+  --red: #e5503f;
+  --yellow: #f5c531;
+  --blue: #4d8ff0;
+  --purple: #9466e0;
+  --white: #e8e4d8;
+  --pink: #f59bc0;
+  --live: #f0604f;
+  --online: #5fcf6a;
   --discord: #8891f7;
-  --st-cours: #6fa0ff;
-  --st-fini: #4cc38a;
-  --st-cent: #e8b04e;
-  --st-aband: #9b98aa;
-  --st-wish: #b58af0;
-  --thumb-a: #262335;
-  --thumb-b: #3a1e2b;
+  --st-cours: #7fb0ff;
+  --st-fini: #8fd16a;
+  --st-cent: #f5c531;
+  --st-aband: #a9b39a;
+  --st-wish: #b894f0;
+  --thumb: #2a3a2b;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
-  --color-side: var(--side);
+  --color-sky: var(--sky);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-outline: var(--outline);
   --color-track: var(--track);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
+  --color-grass: var(--grass);
+  --color-leaf: var(--leaf);
+  --color-soil: var(--soil);
+  --color-on-soil: var(--on-soil);
+  --color-red: var(--red);
+  --color-yellow: var(--yellow);
+  --color-blue: var(--blue);
+  --color-purple: var(--purple);
+  --color-white: var(--white);
+  --color-pink: var(--pink);
   --color-live: var(--live);
   --color-online: var(--online);
   --color-discord: var(--discord);
@@ -97,13 +157,15 @@
   --color-st-cent: var(--st-cent);
   --color-st-aband: var(--st-aband);
   --color-st-wish: var(--st-wish);
-  --color-thumb-a: var(--thumb-a);
-  --color-thumb-b: var(--thumb-b);
+  --color-thumb: var(--thumb);
+  /* Texte posé sur une couleur d'oignon : fixe, quel que soit le thème. */
+  --color-on-color: #ffffff;
+  --color-on-light: #22301c;
 
-  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
-  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --font-display: "Baloo 2", ui-rounded, system-ui, sans-serif;
+  --font-sans: "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Nunito", ui-rounded, system-ui, sans-serif;
+  --font-mono: "Nunito", ui-rounded, system-ui, sans-serif;
 }
 
 @layer base {
@@ -118,13 +180,16 @@
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    line-height: 1.1;
     text-wrap: balance;
   }
+  a {
+    color: var(--accent);
+  }
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 3px solid var(--blue);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 6px;
   }
 }
 
@@ -138,34 +203,84 @@
 }
 
 @layer components {
-  /* Petit libellé en majuscules (dates, catégories). */
+  /* Carte : papier, contour épais, ombre franche. */
+  .card {
+    background: var(--surface);
+    border: 3px solid var(--outline);
+    border-radius: 22px;
+    box-shadow: 0 6px 0 var(--shadow);
+  }
+  /* Bouton pilule vert feuille. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 3px solid var(--outline);
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font: 700 1.0625rem/1 var(--font-display);
+    text-decoration: none;
+    box-shadow: 0 4px 0 var(--outline);
+    cursor: pointer;
+  }
+  .btn:hover {
+    filter: brightness(1.08);
+  }
+  .btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--outline);
+  }
+  .btn[aria-current="page"] {
+    background: var(--surface);
+    color: var(--ink);
+  }
+  /* Petite pastille arrondie (statut, compteur). */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 3px solid var(--outline);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 800;
+    font-size: 0.875rem;
+    line-height: 1;
+  }
+  /* Petit libellé en majuscules (catégories, dates). */
   .kicker {
-    font: 500 0.75rem/1 var(--font-mono);
+    font: 700 0.8125rem/1 var(--font-display);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--muted);
   }
-  /* Fond dégradé provisoire pour les miniatures et jaquettes. */
+  /* Fond des miniatures et jaquettes sans image. */
   .placeholder-art {
-    background: linear-gradient(135deg, var(--thumb-a), var(--thumb-b));
+    background: var(--thumb);
   }
   /* Corps Markdown des fiches de jeu. */
   .prose-game {
-    font: 400 1.1875rem/1.65 var(--font-serif);
+    font: 400 1.125rem/1.7 var(--font-sans);
     max-width: 65ch;
     display: grid;
     gap: 1.1rem;
   }
   .prose-game h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     margin-top: 0.6rem;
   }
   .prose-game blockquote {
     margin: 0.4rem 0;
-    padding-left: 1.1rem;
-    border-left: 3px solid var(--accent);
-    font-style: italic;
-    font-size: 1.35rem;
+    padding: 0.8rem 1.1rem;
+    border: 3px solid var(--outline);
+    border-radius: 18px;
+    background: var(--accent-soft);
+    font-size: 1.25rem;
     line-height: 1.45;
   }
   .prose-game a {

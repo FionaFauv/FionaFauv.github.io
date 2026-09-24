@@ -1,11 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
+import Sprout from '../components/Sprout.astro';
 ---
 
 <BaseLayout title="Page introuvable">
   <div class="grid gap-6">
     <PageHeader kicker="404" title="Game over" intro="Cette page n'existe pas (ou plus)." />
-    <a href="/" class="justify-self-start font-semibold text-accent">Retour à l'accueil</a>
+    <div class="flex items-end gap-1" aria-hidden="true">
+      <Sprout stage="leaf" color="red" size={40} />
+      <Sprout stage="leaf" color="yellow" size={40} />
+      <Sprout stage="leaf" color="blue" size={40} />
+    </div>
+    <a href="/" class="btn justify-self-start">Retour à l'accueil</a>
   </div>
 </BaseLayout>

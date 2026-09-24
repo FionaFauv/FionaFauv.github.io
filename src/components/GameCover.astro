@@ -11,7 +11,7 @@ const { game, class: className = 'w-full', loading = 'lazy' } = Astro.props;
 const src = coverUrl(game);
 ---
 
-<div class:list={['placeholder-art relative aspect-[2/3] overflow-hidden rounded-lg', className]}>
+<div class:list={['placeholder-art relative aspect-[2/3] overflow-hidden rounded-2xl border-[3px] border-outline shadow-[0_4px_0_var(--shadow)]', className]}>
   {
     src && (
       <img
