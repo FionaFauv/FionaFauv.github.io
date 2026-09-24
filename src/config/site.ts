@@ -1,6 +1,9 @@
+import { DISCORD_INVITE_URL } from 'astro:env/server';
+
 /**
  * Configuration unique du site : nom, textes et liens des réseaux.
  * Remplace les URLs ci-dessous par les tiennes, tout le site les reprend.
+ * Lu uniquement au build (importe astro:env/server) : ne pas l'importer dans un <script> client.
  */
 
 export const SITE = {
@@ -12,7 +15,7 @@ export const SITE = {
   lang: 'fr',
 } as const;
 
-export type SocialId = 'youtube' | 'twitch' | 'tiktok' | 'instagram' | 'x' | 'discord' | 'steam';
+export type SocialId = 'youtube' | 'twitch' | 'tiktok' | 'instagram' | 'discord' | 'steam';
 
 export interface Social {
   id: SocialId;
@@ -22,14 +25,21 @@ export interface Social {
   href: string;
 }
 
+/**
+ * Le lien d'invitation Discord vient de DISCORD_INVITE_URL (.env, secret GitHub) pour ne pas être
+ * dans le repo. Sans lui, Discord disparaît des réseaux et le bouton « Ouvrir dans Discord » aussi.
+ */
+const discordInvite: Social | undefined = DISCORD_INVITE_URL
+  ? { id: 'discord', label: 'Discord', description: 'Le serveur (sur invitation)', href: DISCORD_INVITE_URL }
+  : undefined;
+
 export const SOCIALS: Social[] = [
-  { id: 'youtube', label: 'YouTube', description: 'Les vidéos', href: 'https://www.youtube.com/@FionaFauv' },
-  { id: 'twitch', label: 'Twitch', description: 'Les lives', href: 'https://www.twitch.tv/FionaFauv' },
-  { id: 'tiktok', label: 'TikTok', description: 'Les clips', href: 'https://www.tiktok.com/@FionaFauv' },
-  { id: 'instagram', label: 'Instagram', description: 'Photos et DM', href: 'https://www.instagram.com/FionaFauv' },
-  { id: 'x', label: 'X', description: 'Les annonces', href: 'https://x.com/FionaFauv' },
-  { id: 'discord', label: 'Discord', description: 'Le serveur (sur invitation)', href: 'https://discord.gg/INVITATION' },
-  { id: 'steam', label: 'Steam', description: 'Mon profil', href: 'https://steamcommunity.com/id/FionaFauv' },
+  { id: 'youtube', label: 'YouTube', description: 'Les vidéos', href: 'https://www.youtube.com/@Zelfaesque' },
+  { id: 'twitch', label: 'Twitch', description: 'Les lives', href: 'https://www.twitch.tv/Zelfaesque' },
+  { id: 'tiktok', label: 'TikTok', description: 'Les clips', href: 'https://www.tiktok.com/@Zelfaesque' },
+  { id: 'instagram', label: 'Instagram', description: 'Photos et DM', href: 'https://www.instagram.com/Fio_Marshall' },
+  ...(discordInvite ? [discordInvite] : []),
+  { id: 'steam', label: 'Steam', description: 'Mon profil', href: 'https://steamcommunity.com/id/Zelfa' },
 ];
 
 /**
