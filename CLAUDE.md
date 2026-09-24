@@ -42,7 +42,7 @@ Détail complet dans [CONTRIBUTING.md](CONTRIBUTING.md). En résumé :
 - Une fonctionnalité = une Issue = une branche temporaire `feature/<n>-nom` (`<n>` = numéro de l'Issue), créée depuis `dev`.
 - PR `feature/...` → `dev` uniquement quand la fonctionnalité est totalement terminée, avec `Closes #<n>` dans la description.
 - Seule FionaFauv accepte les PR, depuis GitHub. Ne jamais merger soi-même : attendre sa validation.
-- PR acceptée = branche supprimée juste après (locale et distante).
+- PR acceptée = branche supprimée juste après (locale et distante), puis Issue fermée à la main (`Closes #n` ne ferme rien quand la PR vise `dev`, seulement `main`).
 - Commits automatiques, sans demander, avec un message détaillé (quoi, où, pourquoi).
 
 ## Commandes
